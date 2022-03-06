@@ -14,6 +14,7 @@ import java.util.TimerTask;
 import javax.swing.JPanel;
 
 public class GameVisualizer extends JPanel {
+    //volatile необходим для последующей реализации многопоточности
     private volatile double m_robotPositionX = 100;
     private volatile double m_robotPositionY = 100;
     private volatile double m_robotDirection = 0;
@@ -27,11 +28,13 @@ public class GameVisualizer extends JPanel {
     private final Timer m_timer = initTimer();
 
     private static Timer initTimer() {
-        Timer timer = new Timer("events generator", true);
-        return timer;
+        return new Timer("events generator", true);
     }
 
     public GameVisualizer() {
+        // ставит в очередь на исполнение задания по отрисовке,
+        // считыванию инпута мыши(постановка цели)
+        // и обновлению "физического" состояни цели и движущегося объекта
         m_timer.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -54,36 +57,39 @@ public class GameVisualizer extends JPanel {
         setDoubleBuffered(true);
     }
 
-    protected void setTargetPosition(Point p) {
+    protected void setTargetPosition(Point p) { // просто обновление переменных цели
         m_targetPositionX = p.x;
         m_targetPositionY = p.y;
     }
 
-    protected void onRedrawEvent() {
-        EventQueue.invokeLater(this::repaint);
-    }
+    protected void onRedrawEvent() {EventQueue.invokeLater(this::repaint);}
+    // Вызывает на следующем тике потока событий
+    //this::repaint     - вызов метода this.repaint для элемента который был помещен в очередь обработки собтий???
 
     private static double distance(double x1, double y1, double x2, double y2) {
         double diffX = x1 - x2;
         double diffY = y1 - y2;
         return Math.sqrt(diffX * diffX + diffY * diffY);
     }
+    // расчитываем расстояние между двумя точками
 
-    private static double angleTo(double fromX, double fromY, double toX, double toY) {
+    private static double angleToRadians(double fromX, double fromY, double toX, double toY) {
         double diffX = toX - fromX;
         double diffY = toY - fromY;
-
-        return asNormalizedRadians(Math.atan2(diffY, diffX));
+        //находим расстояние которое потом становится угловыми кординатами
+        double polarCoordinates = Math.atan2(diffY, diffX); // преобразовали в полярные координаты
+        return asNormalizedRadians(polarCoordinates);
     }
+    //
 
-    protected void onModelUpdateEvent() {
+    protected void onModelUpdateEvent() { // происходит на каждом обновлении состояния приложения
         double distance = distance(m_targetPositionX, m_targetPositionY,
                 m_robotPositionX, m_robotPositionY);
-        if (distance < 0.5) {
+        if (distance < 0.5) { // мы достигли цели
             return;
         }
         double velocity = maxVelocity;
-        double angleToTarget = angleTo(m_robotPositionX, m_robotPositionY, m_targetPositionX, m_targetPositionY);
+        double angleToTarget = angleToRadians(m_robotPositionX, m_robotPositionY, m_targetPositionX, m_targetPositionY);
         double angularVelocity = 0;
         if (angleToTarget > m_robotDirection) {
             angularVelocity = maxAngularVelocity;
@@ -91,6 +97,9 @@ public class GameVisualizer extends JPanel {
         if (angleToTarget < m_robotDirection) {
             angularVelocity = -maxAngularVelocity;
         }
+        //обновляем угловую скорость (векторная величина, характеризующая быстроту и
+        //направление вращения материальной точки или
+        // абсолютно твёрдого тела относительно центра вращения.)
 
         moveRobot(velocity, angularVelocity, 10);
     }
@@ -127,6 +136,7 @@ public class GameVisualizer extends JPanel {
     }
 
     private static double asNormalizedRadians(double angle) {
+        //у нас есть некий угол в радианах, нам нужно привести его в диапазон от 0 до 2 PI
         while (angle < 0) {
             angle += 2 * Math.PI;
         }
@@ -137,11 +147,12 @@ public class GameVisualizer extends JPanel {
     }
 
     private static int round(double value) {
-        return (int) (value + 0.5);
+        return (int) (value + 0.5); //привидение к int с округлением вверх
     }
 
     @Override
     public void paint(Graphics g) {
+        // отрисовка робота и цели(вроде только этого?)
         super.paint(g);
         Graphics2D g2d = (Graphics2D) g;
         drawRobot(g2d, round(m_robotPositionX), round(m_robotPositionY), m_robotDirection);
@@ -164,33 +175,23 @@ public class GameVisualizer extends JPanel {
         drawOval(g, x, y, diam1, diam2);
     }
 
+    /** три метода выше отвечают за отрисовку и "заливку" овалов*/
+
     private void drawRobot(Graphics2D g, int x, int y, double direction) {
         var robotCenterX = round(m_robotPositionX);
         var robotCenterY = round(m_robotPositionY);
         AffineTransform t = AffineTransform.getRotateInstance(direction, robotCenterX, robotCenterY);
+        //отображение плоскости на саму себя, афинное преобразование
         g.setTransform(t);
         fillAndDrawOval(g, robotCenterX, robotCenterY,
                 Color.MAGENTA, Color.BLACK, 30, 10);
         fillAndDrawOval(g, robotCenterX + 10, robotCenterY,
                 Color.WHITE, Color.BLACK, 5, 5);
-        // g.setColor(Color.MAGENTA);
-        // fillOval(g, robotCenterX, robotCenterY, 30, 10);
-        // g.setColor(Color.BLACK);
-        // drawOval(g, robotCenterX, robotCenterY, 30, 10);
-        //
-        // g.setColor(Color.WHITE);
-        // fillOval(g, robotCenterX  + 10, robotCenterY, 5, 5);
-        // g.setColor(Color.BLACK);
-        // drawOval(g, robotCenterX  + 10, robotCenterY, 5, 5);
     }
 
     private void drawTarget(Graphics2D g, int x, int y) {
         AffineTransform t = AffineTransform.getRotateInstance(0, 0, 0);
         g.setTransform(t);
         fillAndDrawOval(g, x, y, Color.GREEN, Color.black, 5, 5);
-        // g.setColor(Color.GREEN);
-        // fillOval(g, x, y, 5, 5);
-        // g.setColor(Color.BLACK);
-        // drawOval(g, x, y, 5, 5);
     }
 }

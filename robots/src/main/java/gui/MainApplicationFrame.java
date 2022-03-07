@@ -41,6 +41,9 @@ public class MainApplicationFrame extends JFrame
         LogWindow logWindow = createLogWindow();
         addWindow(logWindow);
 
+        ButtonWindow buttonWindow = createButtonWindow();
+        addWindow(buttonWindow);
+
         GameWindow gameWindow = new GameWindow();
         gameWindow.setSize(400,  400);
         addWindow(gameWindow);
@@ -52,12 +55,22 @@ public class MainApplicationFrame extends JFrame
     protected LogWindow createLogWindow()
     {
         LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource());
-        logWindow.setLocation(10,10);
+        logWindow.setLocation(800,10);
         logWindow.setSize(300, 800);
         setMinimumSize(logWindow.getSize());
         logWindow.pack();
         Logger.debug("Протокол работает");
         return logWindow;
+    }
+
+    protected ButtonWindow createButtonWindow()
+    {
+        ButtonWindow buttonWindow = new ButtonWindow();
+        buttonWindow.setLocation(500,10);
+        buttonWindow.setSize(300, 800);
+        setMinimumSize(buttonWindow.getSize());
+        buttonWindow.pack();
+        return buttonWindow;
     }
     
     protected void addWindow(JInternalFrame frame)

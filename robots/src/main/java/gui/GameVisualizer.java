@@ -7,11 +7,15 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.geom.AffineTransform;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.swing.JPanel;
+
+import static com.sun.java.accessibility.util.AWTEventMonitor.addWindowListener;
 
 public class GameVisualizer extends JPanel {
     //volatile необходим для последующей реализации многопоточности
@@ -30,6 +34,7 @@ public class GameVisualizer extends JPanel {
     private static Timer initTimer() {
         return new Timer("events generator", true);
     }
+
 
     public GameVisualizer() {
         // ставит в очередь на исполнение задания по отрисовке,
@@ -54,6 +59,17 @@ public class GameVisualizer extends JPanel {
                 repaint();
             }
         });
+
+        /*
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                Exiter.onExit();
+                GameVisualizer.this.setVisible(false);
+                //GameVisualizer.this.dispose();
+            }
+        });
+
+         */
         setDoubleBuffered(true);
     }
 
@@ -62,7 +78,9 @@ public class GameVisualizer extends JPanel {
         m_targetPositionY = p.y;
     }
 
-    protected void onRedrawEvent() {EventQueue.invokeLater(this::repaint);}
+    protected void onRedrawEvent() {
+        EventQueue.invokeLater(this::repaint);
+    }
     // Вызывает на следующем тике потока событий
     //this::repaint     - вызов метода this.repaint для элемента который был помещен в очередь обработки собтий???
 
@@ -175,7 +193,9 @@ public class GameVisualizer extends JPanel {
         drawOval(g, x, y, diam1, diam2);
     }
 
-    /** три метода выше отвечают за отрисовку и "заливку" овалов*/
+    /**
+     * три метода выше отвечают за отрисовку и "заливку" овалов
+     */
 
     private void drawRobot(Graphics2D g, int x, int y, double direction) {
         var robotCenterX = round(m_robotPositionX);

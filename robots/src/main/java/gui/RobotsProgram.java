@@ -1,5 +1,6 @@
 package gui;
 
+import java.util.ResourceBundle;
 import java.awt.Frame;
 
 import javax.swing.SwingUtilities;

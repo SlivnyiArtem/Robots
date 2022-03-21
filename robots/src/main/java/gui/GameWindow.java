@@ -19,4 +19,10 @@ public class GameWindow extends JInternalFrame {
         getContentPane().add(panel);
         pack();
     }
+
+    @Override public void doDefaultCloseAction() {
+        var confirmResult = Exiter.onExit();
+        if (confirmResult == 0)
+            super.doDefaultCloseAction();
+    }
 }

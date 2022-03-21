@@ -135,6 +135,28 @@ public class MainApplicationFrame extends JFrame
             lookAndFeelMenu.add(crossplatformLookAndFeel);
         }
 
+        var exitMenu = new JMenuItem("Выход");
+        exitMenu.addActionListener((event) -> {
+            Logger.debug("Совершён выход");
+            if (Exiter.onExit() == 0) System.exit(0);
+        });
+        {
+            exitMenu.getAccessibleContext().setAccessibleDescription(
+                    "Тестовые команды");
+
+            {
+                JMenuItem addLogMessageItem = new JMenuItem("Сообщение в лог", KeyEvent.VK_S);
+                addLogMessageItem.addActionListener((event) -> {
+                    Logger.debug("Новая строка");
+                });
+                //testMenu.add(addLogMessageItem);
+            }
+        }
+
+        //exitMenu.getAccessibleContext().setAccessibleDescription(
+                //"Тестовые команды");
+
+
         JMenu testMenu = new JMenu("Тесты");
         testMenu.setMnemonic(KeyEvent.VK_T);
         testMenu.getAccessibleContext().setAccessibleDescription(
@@ -150,6 +172,7 @@ public class MainApplicationFrame extends JFrame
 
         menuBar.add(lookAndFeelMenu);
         menuBar.add(testMenu);
+        menuBar.add(exitMenu);
         return menuBar;
     }
     

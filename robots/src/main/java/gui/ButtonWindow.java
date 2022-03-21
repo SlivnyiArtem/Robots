@@ -31,4 +31,11 @@ public class ButtonWindow extends JInternalFrame {
         getContentPane().add(buttonPanel);
         pack();
     }
+
+    @Override public void doDefaultCloseAction() {
+        var confirmResult = Exiter.onExit();
+        if (confirmResult == 0)
+            super.doDefaultCloseAction();
+    }
+
 }

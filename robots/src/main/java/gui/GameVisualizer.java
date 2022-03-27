@@ -13,7 +13,7 @@ import java.awt.geom.AffineTransform;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import javax.swing.JPanel;
+import javax.swing.*;
 
 import static com.sun.java.accessibility.util.AWTEventMonitor.addWindowListener;
 
@@ -106,6 +106,7 @@ public class GameVisualizer extends JPanel {
         if (distance < 0.5) { // мы достигли цели
             return;
         }
+
         double velocity = maxVelocity;
         double angleToTarget = angleToRadians(m_robotPositionX, m_robotPositionY, m_targetPositionX, m_targetPositionY);
         double angularVelocity = 0;
@@ -148,6 +149,15 @@ public class GameVisualizer extends JPanel {
 
         m_robotPositionX = newX;
         m_robotPositionY = newY;
+        if (m_robotPositionX > 400 ||m_robotPositionX < 0){
+            m_robotPositionX = 200;
+            m_targetPositionY = 200;
+        }
+
+        if (m_robotPositionY > 400 ||m_robotPositionY < 0){
+            m_robotPositionX = 200;
+            m_targetPositionY = 200;
+        }
 
         double newDirection = asNormalizedRadians(m_robotDirection + angularVelocity * movementDuration);
         m_robotDirection = newDirection;

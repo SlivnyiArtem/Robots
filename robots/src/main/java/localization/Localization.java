@@ -9,15 +9,14 @@ public class Localization {
 
 	private static ResourceBundle r = ResourceBundle.getBundle(BUNDLE_STRING);
 
-	public static void UpdateBundle()
+	private static Locale locale = new Locale("ru");
+
+	public static void updateBundle()
 	{
-		System.out.println("Updating");
-		//Locale locale = new Locale("ru");
-		//r = ResourceBundle.getBundle("LangBundle", locale);
-	}
-	
-	public static void changeLocale(LocalizationType language) {
-		r = ResourceBundle.getBundle(BUNDLE_STRING, new Locale(language.toString()));
+		//System.out.println(r);
+		locale = (locale.toString().equals("ru")) ? new Locale("en") : new Locale("ru");
+		r = ResourceBundle.getBundle(BUNDLE_STRING, locale);
+		//System.out.println(locale.toString());
 	}
 	
 	public static String getTestLabel() {

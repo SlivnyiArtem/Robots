@@ -17,6 +17,7 @@ public class MenuBarGenerator extends JMenuBar {
 		super();
 		 this.add(getUpLookAndFeelMenu());
 	     this.add(getTestMenu());
+         this.add(getExitMenu());
 	}
 	
     private JMenu getTestMenu() {
@@ -62,7 +63,43 @@ public class MenuBarGenerator extends JMenuBar {
 
         return lookAndFeelMenu;
     }
-    
+
+    private JMenu getExitMenu() {
+        JMenu exitMenu = new JMenu(Localization.getQuit());
+        //testMenu.setMnemonic(KeyEvent.VK_B);
+        exitMenu.addActionListener((event) -> {
+            System.out.println("!");
+            Logger.debug(Localization.getTestMessageLogText());
+        });
+        {
+            exitMenu.getAccessibleContext().setAccessibleDescription(
+                    "Тестовые команды");
+
+            {
+                JMenuItem addLogMessageItem = new JMenuItem("Сообщение в лог", KeyEvent.VK_S);
+                addLogMessageItem.addActionListener((event) -> {
+                    Logger.debug("Новая строка");
+                });
+                //testMenu.add(addLogMessageItem);
+            }
+        }
+
+        /*
+
+        testMenu.getAccessibleContext().setAccessibleDescription(
+                Localization.getTestMenuLabel());
+
+        {
+            JMenuItem addLogMessageItem = new JMenuItem(Localization.getTestMessageLogLabel(), KeyEvent.VK_S);
+            addLogMessageItem.addActionListener((event) -> {
+                Logger.debug(Localization.getTestMessageLogText());
+            });
+            testMenu.add(addLogMessageItem);
+        }
+
+         */
+        return exitMenu;
+    }
     
     private void setLookAndFeel(String className)
     {

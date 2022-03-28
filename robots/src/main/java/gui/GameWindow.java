@@ -8,11 +8,19 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-public class GameWindow extends JInternalFrame {
-    private final GameVisualizer m_visualizer;
 
-    public GameWindow() {
-        super("Игровое поле", true, true, true, true);
+import javax.swing.JInternalFrame;
+import javax.swing.JPanel;
+
+import localization.Localization;
+
+public class GameWindow extends JInternalFrame
+{
+    private final GameVisualizer m_visualizer;
+    public GameWindow() 
+    {
+        super(Localization.getGameField(), true, true, true, true);
+
         m_visualizer = new GameVisualizer();
         JPanel panel = new JPanel();
         panel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));

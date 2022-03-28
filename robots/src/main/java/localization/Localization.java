@@ -8,6 +8,13 @@ public class Localization {
 	private static final String BUNDLE_STRING = "language";
 
 	private static ResourceBundle r = ResourceBundle.getBundle(BUNDLE_STRING);
+
+	public static void UpdateBundle()
+	{
+		System.out.println("Updating");
+		//Locale locale = new Locale("ru");
+		//r = ResourceBundle.getBundle("LangBundle", locale);
+	}
 	
 	public static void changeLocale(LocalizationType language) {
 		r = ResourceBundle.getBundle(BUNDLE_STRING, new Locale(language.toString()));

@@ -5,17 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8362c590-2bed-4a30-a852-187921b8a22c" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/robots/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/robots/src/gui/GameVisualizer.java" beforeDir="false" afterPath="$PROJECT_DIR$/robots/src/main/java/gui/GameVisualizer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/robots/src/gui/GameWindow.java" beforeDir="false" afterPath="$PROJECT_DIR$/robots/src/main/java/gui/GameWindow.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/robots/src/gui/LogWindow.java" beforeDir="false" afterPath="$PROJECT_DIR$/robots/src/main/java/gui/LogWindow.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/robots/src/gui/MainApplicationFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/robots/src/main/java/gui/MainApplicationFrame.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/robots/src/gui/RobotsProgram.java" beforeDir="false" afterPath="$PROJECT_DIR$/robots/src/main/java/gui/RobotsProgram.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/robots/src/log/LogChangeListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/robots/src/main/java/log/LogChangeListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/robots/src/log/LogEntry.java" beforeDir="false" afterPath="$PROJECT_DIR$/robots/src/main/java/log/LogEntry.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/robots/src/log/LogLevel.java" beforeDir="false" afterPath="$PROJECT_DIR$/robots/src/main/java/log/LogLevel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/robots/src/log/LogWindowSource.java" beforeDir="false" afterPath="$PROJECT_DIR$/robots/src/main/java/log/LogWindowSource.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/robots/src/log/Logger.java" beforeDir="false" afterPath="$PROJECT_DIR$/robots/src/main/java/log/Logger.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/robots/src/main/java/gui/Exiter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/robots/src/main/java/gui/GameWindow.java" beforeDir="false" afterPath="$PROJECT_DIR$/robots/src/main/java/gui/GameWindow.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/robots/target/classes/gui/GameWindow.class" beforeDir="false" afterPath="$PROJECT_DIR$/robots/target/classes/gui/GameWindow.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

@@ -41,6 +41,9 @@ public class MainApplicationFrame extends JFrame
         LogWindow logWindow = createLogWindow();
         addWindow(logWindow);
 
+        ButtonWindow buttonWindow = createButtonWindow();
+        addWindow(buttonWindow);
+
         GameWindow gameWindow = new GameWindow();
         gameWindow.setSize(400,  400);
         addWindow(gameWindow);
@@ -52,12 +55,22 @@ public class MainApplicationFrame extends JFrame
     protected LogWindow createLogWindow()
     {
         LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource());
-        logWindow.setLocation(10,10);
+        logWindow.setLocation(800,10);
         logWindow.setSize(300, 800);
         setMinimumSize(logWindow.getSize());
         logWindow.pack();
         Logger.debug("Протокол работает");
         return logWindow;
+    }
+
+    protected ButtonWindow createButtonWindow()
+    {
+        ButtonWindow buttonWindow = new ButtonWindow();
+        buttonWindow.setLocation(500,10);
+        buttonWindow.setSize(300, 800);
+        setMinimumSize(buttonWindow.getSize());
+        buttonWindow.pack();
+        return buttonWindow;
     }
     
     protected void addWindow(JInternalFrame frame)
@@ -122,6 +135,28 @@ public class MainApplicationFrame extends JFrame
             lookAndFeelMenu.add(crossplatformLookAndFeel);
         }
 
+        var exitMenu = new JMenuItem("Выход");
+        exitMenu.addActionListener((event) -> {
+            Logger.debug("Совершён выход");
+            if (Exiter.onExit() == 0) System.exit(0);
+        });
+        {
+            exitMenu.getAccessibleContext().setAccessibleDescription(
+                    "Тестовые команды");
+
+            {
+                JMenuItem addLogMessageItem = new JMenuItem("Сообщение в лог", KeyEvent.VK_S);
+                addLogMessageItem.addActionListener((event) -> {
+                    Logger.debug("Новая строка");
+                });
+                //testMenu.add(addLogMessageItem);
+            }
+        }
+
+        //exitMenu.getAccessibleContext().setAccessibleDescription(
+                //"Тестовые команды");
+
+
         JMenu testMenu = new JMenu("Тесты");
         testMenu.setMnemonic(KeyEvent.VK_T);
         testMenu.getAccessibleContext().setAccessibleDescription(
@@ -137,6 +172,7 @@ public class MainApplicationFrame extends JFrame
 
         menuBar.add(lookAndFeelMenu);
         menuBar.add(testMenu);
+        menuBar.add(exitMenu);
         return menuBar;
     }
     

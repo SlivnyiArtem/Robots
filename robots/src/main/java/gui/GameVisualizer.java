@@ -60,17 +60,6 @@ public class GameVisualizer extends JPanel {
                 repaint();
             }
         });
-
-        /*
-        addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
-                Exiter.onExit();
-                GameVisualizer.this.setVisible(false);
-                //GameVisualizer.this.dispose();
-            }
-        });
-
-         */
         setDoubleBuffered(true);
     }
 

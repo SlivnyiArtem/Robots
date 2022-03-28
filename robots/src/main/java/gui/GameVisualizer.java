@@ -10,6 +10,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.AffineTransform;
+import java.io.Console;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -120,6 +121,9 @@ public class GameVisualizer extends JPanel {
         //направление вращения материальной точки или
         // абсолютно твёрдого тела относительно центра вращения.)
 
+
+        tryStartOutTheDifferentBorder(400, 0);
+
         moveRobot(velocity, angularVelocity, 10);
     }
 
@@ -127,6 +131,16 @@ public class GameVisualizer extends JPanel {
         if (value < min)
             return min;
         return Math.min(value, max);
+    }
+
+    // Выход с другого края доски
+    private void tryStartOutTheDifferentBorder(double borderRight, double borderLeft) {
+        if (m_robotPositionX > borderRight ||m_robotPositionX < borderLeft) {
+            m_robotPositionX = borderRight - m_robotPositionX;
+        }
+        if (m_robotPositionY > borderRight ||m_robotPositionY < borderLeft) {
+            m_robotPositionY = borderRight - m_robotPositionY;
+        }
     }
 
     private void moveRobot(double velocity, double angularVelocity, double movementDuration) {
@@ -149,15 +163,6 @@ public class GameVisualizer extends JPanel {
 
         m_robotPositionX = newX;
         m_robotPositionY = newY;
-        if (m_robotPositionX > 400 ||m_robotPositionX < 0){
-            m_robotPositionX = 200;
-            m_targetPositionY = 200;
-        }
-
-        if (m_robotPositionY > 400 ||m_robotPositionY < 0){
-            m_robotPositionX = 200;
-            m_targetPositionY = 200;
-        }
 
         double newDirection = asNormalizedRadians(m_robotDirection + angularVelocity * movementDuration);
         m_robotDirection = newDirection;

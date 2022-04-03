@@ -11,6 +11,8 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.AffineTransform;
 import java.io.Console;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -18,10 +20,10 @@ import javax.swing.*;
 
 import static com.sun.java.accessibility.util.AWTEventMonitor.addWindowListener;
 
-public class GameVisualizer extends JPanel {
+public class GameVisualizer extends JPanel{
     //volatile необходим для последующей реализации многопоточности
-    private volatile double m_robotPositionX = 100;
-    private volatile double m_robotPositionY = 100;
+    public volatile double m_robotPositionX = 100;
+    public volatile double m_robotPositionY = 100;
     private volatile double m_robotDirection = 0;
 
     private volatile int m_targetPositionX = 150;
@@ -32,15 +34,7 @@ public class GameVisualizer extends JPanel {
 
     private final Timer m_timer = initTimer();
 
-    private static Timer initTimer() {
-        return new Timer("events generator", true);
-    }
-
-
     public GameVisualizer() {
-        // ставит в очередь на исполнение задания по отрисовке,
-        // считыванию инпута мыши(постановка цели)
-        // и обновлению "физического" состояни цели и движущегося объекта
         m_timer.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -63,6 +57,9 @@ public class GameVisualizer extends JPanel {
         setDoubleBuffered(true);
     }
 
+    private static Timer initTimer() {
+        return new Timer("events generator", true);
+    }
     protected void setTargetPosition(Point p) { // просто обновление переменных цели
         m_targetPositionX = p.x;
         m_targetPositionY = p.y;
@@ -110,7 +107,6 @@ public class GameVisualizer extends JPanel {
         //направление вращения материальной точки или
         // абсолютно твёрдого тела относительно центра вращения.)
 
-
         tryStartOutTheDifferentBorder(400, 0);
 
         moveRobot(velocity, angularVelocity, 10);
@@ -122,6 +118,7 @@ public class GameVisualizer extends JPanel {
         return Math.min(value, max);
     }
 
+
     // Выход с другого края доски
     private void tryStartOutTheDifferentBorder(double borderRight, double borderLeft) {
         if (m_robotPositionX > borderRight ||m_robotPositionX < borderLeft) {
@@ -131,6 +128,7 @@ public class GameVisualizer extends JPanel {
             m_robotPositionY = borderRight - m_robotPositionY;
         }
     }
+
 
     private void moveRobot(double velocity, double angularVelocity, double movementDuration) {
         velocity = applyLimits(velocity, 0, maxVelocity);
@@ -218,4 +216,6 @@ public class GameVisualizer extends JPanel {
         g.setTransform(t);
         fillAndDrawOval(g, x, y, Color.GREEN, Color.black, 5, 5);
     }
+
+
 }

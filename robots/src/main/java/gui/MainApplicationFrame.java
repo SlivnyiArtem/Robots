@@ -108,15 +108,14 @@ public class MainApplicationFrame extends JFrame
 //        return menuBar;
 //    }
     
-    private JMenuBar generateMenuBar()
-    {
+    private JMenuBar generateMenuBar() {
         JMenuBar menuBar = new JMenuBar();
-        
+
         JMenu lookAndFeelMenu = new JMenu("Режим отображения");
         lookAndFeelMenu.setMnemonic(KeyEvent.VK_V);
         lookAndFeelMenu.getAccessibleContext().setAccessibleDescription(
                 "Управление режимом отображения приложения");
-        
+
         {
             JMenuItem systemLookAndFeel = new JMenuItem("Системная схема", KeyEvent.VK_S);
             systemLookAndFeel.addActionListener((event) -> {
@@ -134,6 +133,7 @@ public class MainApplicationFrame extends JFrame
             });
             lookAndFeelMenu.add(crossplatformLookAndFeel);
         }
+        //----------------------------------------------------------------------------------------------------
 
         var exitMenu = new JMenuItem("Выход");
         exitMenu.addActionListener((event) -> {
@@ -145,7 +145,7 @@ public class MainApplicationFrame extends JFrame
                     "Тестовые команды");
 
             {
-                JMenuItem addLogMessageItem = new JMenuItem("Сообщение в лог", KeyEvent.VK_S);
+                JMenuItem addLogMessageItem = new JMenuItem("Сообщение в лог", KeyEvent.VK_E);
                 addLogMessageItem.addActionListener((event) -> {
                     Logger.debug("Новая строка");
                 });
@@ -153,26 +153,43 @@ public class MainApplicationFrame extends JFrame
             }
         }
 
-        //exitMenu.getAccessibleContext().setAccessibleDescription(
-                //"Тестовые команды");
 
+        //-------------------------------------------------------------------------------------------------
 
         JMenu testMenu = new JMenu("Тесты");
-        testMenu.setMnemonic(KeyEvent.VK_T);
         testMenu.getAccessibleContext().setAccessibleDescription(
                 "Тестовые команды");
-        
+
         {
-            JMenuItem addLogMessageItem = new JMenuItem("Сообщение в лог", KeyEvent.VK_S);
+            JMenuItem addLogMessageItem = new JMenuItem("Сообщение в лог");
             addLogMessageItem.addActionListener((event) -> {
                 Logger.debug("Новая строка");
             });
             testMenu.add(addLogMessageItem);
         }
 
+        //-----------------------------------------------------------------------------------------------
+
+        JMenu langMenu = new JMenu("Язык");
+        testMenu.getAccessibleContext()
+                .setAccessibleDescription("Смена языка");
+
+        {
+            JMenuItem addChangeLocalizationItem = new JMenuItem("Сменить язык");
+            addChangeLocalizationItem.addActionListener((event) -> {
+                //???
+                Logger.debug("CHANGE LANG");
+            });
+            langMenu.add(addChangeLocalizationItem);
+        }
+
+
+
+        //-----------------------------------------------------------------------------------------------
         menuBar.add(lookAndFeelMenu);
         menuBar.add(testMenu);
         menuBar.add(exitMenu);
+        menuBar.add(langMenu);
         return menuBar;
     }
     

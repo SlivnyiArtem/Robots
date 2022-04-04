@@ -11,18 +11,16 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.AffineTransform;
 import java.io.Console;
-import java.util.Observable;
-import java.util.Observer;
+import java.util.*;
 import java.util.Timer;
-import java.util.TimerTask;
 
 import javax.swing.*;
 
 import static com.sun.java.accessibility.util.AWTEventMonitor.addWindowListener;
 
-public class GameVisualizer extends JPanel{
+public class GameVisualizer extends JPanel {
     //volatile необходим для последующей реализации многопоточности
-    public volatile double m_robotPositionX = 100;
+    public volatile double m_robotPositionX = 150;
     public volatile double m_robotPositionY = 100;
     private volatile double m_robotDirection = 0;
 
@@ -33,6 +31,9 @@ public class GameVisualizer extends JPanel{
     private static final double maxAngularVelocity = 0.001;
 
     private final Timer m_timer = initTimer();
+    private volatile double CurrentBorderRight;
+
+    private volatile double CurrentBorderDown;
 
     public GameVisualizer() {
         m_timer.schedule(new TimerTask() {
@@ -107,7 +108,7 @@ public class GameVisualizer extends JPanel{
         //направление вращения материальной точки или
         // абсолютно твёрдого тела относительно центра вращения.)
 
-        tryStartOutTheDifferentBorder(400, 0);
+        tryStartOutTheDifferentBorder();
 
         moveRobot(velocity, angularVelocity, 10);
     }
@@ -120,12 +121,12 @@ public class GameVisualizer extends JPanel{
 
 
     // Выход с другого края доски
-    private void tryStartOutTheDifferentBorder(double borderRight, double borderLeft) {
-        if (m_robotPositionX > borderRight ||m_robotPositionX < borderLeft) {
-            m_robotPositionX = borderRight - m_robotPositionX;
+    private void tryStartOutTheDifferentBorder() {
+        if (m_robotPositionX > CurrentBorderRight ||m_robotPositionX < 0) {
+            m_robotPositionX = CurrentBorderRight - m_robotPositionX;
         }
-        if (m_robotPositionY > borderRight ||m_robotPositionY < borderLeft) {
-            m_robotPositionY = borderRight - m_robotPositionY;
+        if (m_robotPositionY > CurrentBorderDown ||m_robotPositionY < 0) {
+            m_robotPositionY = CurrentBorderDown - m_robotPositionY;
         }
     }
 
@@ -218,4 +219,10 @@ public class GameVisualizer extends JPanel{
     }
 
 
-}
+    //GameWindow a = new GameWindow();
+    public void setWH(double w, double h){
+        this.CurrentBorderDown = h;
+        this.CurrentBorderRight = w;
+        }
+    }
+

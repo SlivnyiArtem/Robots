@@ -7,11 +7,36 @@ public class Localization {
 
 	private static final String BUNDLE_STRING = "language";
 
-	private static ResourceBundle r = ResourceBundle.getBundle(BUNDLE_STRING);
+	//private static ResourceBundle r = ResourceBundle.getBundle(BUNDLE_STRING, new Locale("en"));
+	private static ResourceBundle r;
+
+	static {
+		try {
+			r = ResourceBundle.getBundle(BUNDLE_STRING, CurrentLocalizationSettings.getUpdateLocale());
+			System.out.println(CurrentLocalizationSettings.getUpdateLocale());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	//private static ResourceBundle r;
+
+	//private static Locale locale = r.getLocale();
 
 	public static void UpdateBundle()
 	{
-		System.out.println("Updating");
+		try {
+			r = ResourceBundle.getBundle(BUNDLE_STRING, CurrentLocalizationSettings.getUpdateLocale());
+			System.out.println(CurrentLocalizationSettings.getUpdateLocale());
+		}
+
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		//System.out.println("Updating");
+		//locale = (locale.toString().equals("ru")) ? new Locale("en") : new Locale("ru");
+		//r = ResourceBundle.getBundle(BUNDLE_STRING, locale);
+		//System.out.println(r.getLocale());
 		//Locale locale = new Locale("ru");
 		//r = ResourceBundle.getBundle("LangBundle", locale);
 	}
@@ -75,4 +100,14 @@ public static String getProtocolLabel() {
 public static String getGameField() {
 	return r.getString("localizationGameField");
 }
+
+public static String getCommandsLabel() {return r.getString("commandsLabel");}
+
+public static String getExitConfirmation() {
+		return r.getString("exitConfirm");
+	}
+
+//Не знаю как лучше
+//public static String getSomeMessage(String input){return r.getString(input);}
+
 }

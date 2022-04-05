@@ -1,5 +1,7 @@
 package gui;
 
+import localization.Localization;
+
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import java.awt.BorderLayout;
@@ -13,18 +15,11 @@ public class GameWindow extends JInternalFrame implements SizeState{
     public double Weight;
 
     public GameWindow() {
-        super("Игровое поле", true, true, true, true);
+        super(Localization.getGameField(), true, true, true, true);
         m_visualizer = new GameVisualizer();
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(m_visualizer, BorderLayout.CENTER);
         getContentPane().add(panel);
-        /*
-        JPanel panel = new JPanel();
-        panel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
-        panel.setLayout(new BorderLayout());
-        panel.add(m_visualizer, BorderLayout.CENTER);
-
-         */
         pack();
         panel.addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent evt) {

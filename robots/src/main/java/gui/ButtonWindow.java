@@ -1,5 +1,7 @@
 package gui;
 
+import localization.Localization;
+
 import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
 import javax.swing.JButton;
@@ -11,10 +13,10 @@ public class ButtonWindow extends JInternalFrame {
     private final GameVisualizer m_visualizer;
 
     public ButtonWindow() {
-        super("Комманды", true, true, true, true);
+        super(Localization.getCommandsLabel(), true, true, true, true);
         m_visualizer = new GameVisualizer();
         JPanel buttonPanel = new JPanel(new BorderLayout());
-        JButton exitButton = new JButton("Exit");
+        JButton exitButton = new JButton(Localization.getQuit());
         exitButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 //panel.setVisible(false);

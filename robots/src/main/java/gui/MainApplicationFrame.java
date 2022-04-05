@@ -14,6 +14,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import localization.Localization;
 import log.Logger;
 
 /**
@@ -59,7 +60,7 @@ public class MainApplicationFrame extends JFrame
         logWindow.setSize(300, 800);
         setMinimumSize(logWindow.getSize());
         logWindow.pack();
-        Logger.debug("Протокол работает");
+        Logger.debug(Localization.getLoggerSuccess());
         return logWindow;
     }
 
@@ -111,13 +112,14 @@ public class MainApplicationFrame extends JFrame
     private JMenuBar generateMenuBar() {
         JMenuBar menuBar = new JMenuBar();
 
-        JMenu lookAndFeelMenu = new JMenu("Режим отображения");
+        JMenu lookAndFeelMenu = new JMenu(Localization.getTestLookUpLabel());
         lookAndFeelMenu.setMnemonic(KeyEvent.VK_V);
         lookAndFeelMenu.getAccessibleContext().setAccessibleDescription(
-                "Управление режимом отображения приложения");
+                Localization.getTestLookUpText());
 
         {
-            JMenuItem systemLookAndFeel = new JMenuItem("Системная схема", KeyEvent.VK_S);
+            JMenuItem systemLookAndFeel =
+                    new JMenuItem(Localization.getTestLookUpTextItemSystemScheme(), KeyEvent.VK_S);
             systemLookAndFeel.addActionListener((event) -> {
                 setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
                 this.invalidate();
@@ -126,7 +128,8 @@ public class MainApplicationFrame extends JFrame
         }
 
         {
-            JMenuItem crossplatformLookAndFeel = new JMenuItem("Универсальная схема", KeyEvent.VK_S);
+            JMenuItem crossplatformLookAndFeel =
+                    new JMenuItem(Localization.getTestLookUpTextItemUniScheme(), KeyEvent.VK_S);
             crossplatformLookAndFeel.addActionListener((event) -> {
                 setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
                 this.invalidate();
@@ -135,30 +138,27 @@ public class MainApplicationFrame extends JFrame
         }
         //----------------------------------------------------------------------------------------------------
 
-        var exitMenu = new JMenuItem("Выход");
+        var exitMenu = new JMenuItem(Localization.getQuit());
         exitMenu.addActionListener((event) -> {
-            Logger.debug("Совершён выход");
+            Logger.debug(Localization.getExitConfirmation());
             if (Exiter.onExit() == 0) System.exit(0);
         });
         {
-            exitMenu.getAccessibleContext().setAccessibleDescription(
-                    "Тестовые команды");
+            exitMenu.getAccessibleContext().setAccessibleDescription( Localization.getTestLabel());
 
             {
-                JMenuItem addLogMessageItem = new JMenuItem("Сообщение в лог", KeyEvent.VK_E);
+                JMenuItem addLogMessageItem = new JMenuItem(Localization.getTestMessageLogLabel(), KeyEvent.VK_E);
                 addLogMessageItem.addActionListener((event) -> {
                     Logger.debug("Новая строка");
                 });
-                //testMenu.add(addLogMessageItem);
             }
         }
 
 
         //-------------------------------------------------------------------------------------------------
 
-        JMenu testMenu = new JMenu("Тесты");
-        testMenu.getAccessibleContext().setAccessibleDescription(
-                "Тестовые команды");
+        JMenu testMenu = new JMenu(Localization.getTestLabel());
+        testMenu.getAccessibleContext().setAccessibleDescription(Localization.getTestMenuLabel());
 
         {
             JMenuItem addLogMessageItem = new JMenuItem("Сообщение в лог");
@@ -177,7 +177,15 @@ public class MainApplicationFrame extends JFrame
         {
             JMenuItem addChangeLocalizationItem = new JMenuItem("Сменить язык");
             addChangeLocalizationItem.addActionListener((event) -> {
+
+
                 //???
+                Localization.UpdateBundle();
+
+
+                //this.invalidate();
+                this.repaint();
+
                 Logger.debug("CHANGE LANG");
             });
             langMenu.add(addChangeLocalizationItem);

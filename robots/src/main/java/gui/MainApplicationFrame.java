@@ -14,6 +14,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import localization.CurrentLocalizationSettings;
 import localization.Localization;
 import log.Logger;
 
@@ -26,6 +27,8 @@ import log.Logger;
 public class MainApplicationFrame extends JFrame
 {
     private final JDesktopPane desktopPane = new JDesktopPane();
+
+    //private CurrentLocalizationSettings localizationSettings;
     
     public MainApplicationFrame() {
         //Make the big window be indented 50 pixels from each edge
@@ -37,7 +40,6 @@ public class MainApplicationFrame extends JFrame
             screenSize.height - inset*2);
 
         setContentPane(desktopPane);
-        
         
         LogWindow logWindow = createLogWindow();
         addWindow(logWindow);
@@ -63,6 +65,11 @@ public class MainApplicationFrame extends JFrame
         Logger.debug(Localization.getLoggerSuccess());
         return logWindow;
     }
+
+    //protected void createLocalizationSettings()
+    //{
+        //localizationSettings = new CurrentLocalizationSettings("ru");
+    //}
 
     protected ButtonWindow createButtonWindow()
     {
@@ -182,9 +189,10 @@ public class MainApplicationFrame extends JFrame
                 //???
                 Localization.UpdateBundle();
 
+                setJMenuBar(generateMenuBar());
 
                 //this.invalidate();
-                this.repaint();
+                //this.repaint();
 
                 Logger.debug("CHANGE LANG");
             });

@@ -6,39 +6,27 @@ import java.util.ResourceBundle;
 public class Localization {
 
 	private static final String BUNDLE_STRING = "language";
-
-	//private static ResourceBundle r = ResourceBundle.getBundle(BUNDLE_STRING, new Locale("en"));
 	private static ResourceBundle r;
 
 	static {
 		try {
 			r = ResourceBundle.getBundle(BUNDLE_STRING, CurrentLocalizationSettings.getUpdateLocale());
-			System.out.println(CurrentLocalizationSettings.getUpdateLocale());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	//private static ResourceBundle r;
-
-	//private static Locale locale = r.getLocale();
 
 	public static void UpdateBundle()
 	{
 		try {
 			r = ResourceBundle.getBundle(BUNDLE_STRING, CurrentLocalizationSettings.getUpdateLocale());
-			System.out.println(CurrentLocalizationSettings.getUpdateLocale());
 		}
 
 		catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		//System.out.println("Updating");
-		//locale = (locale.toString().equals("ru")) ? new Locale("en") : new Locale("ru");
-		//r = ResourceBundle.getBundle(BUNDLE_STRING, locale);
-		//System.out.println(r.getLocale());
-		//Locale locale = new Locale("ru");
-		//r = ResourceBundle.getBundle("LangBundle", locale);
+		System.out.println(r.getLocale());
 	}
 	
 	public static void changeLocale(LocalizationType language) {

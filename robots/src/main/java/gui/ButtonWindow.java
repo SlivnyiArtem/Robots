@@ -19,8 +19,6 @@ public class ButtonWindow extends JInternalFrame {
         JButton exitButton = new JButton(Localization.getQuit());
         exitButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                //panel.setVisible(false);
-
                 /**
                  * здесь мы вызываем сообщение о закрытии
                  **/

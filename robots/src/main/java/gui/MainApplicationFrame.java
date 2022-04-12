@@ -14,7 +14,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import localization.CurrentLocalizationSettings;
 import localization.Localization;
 import log.Logger;
 
@@ -177,23 +176,14 @@ public class MainApplicationFrame extends JFrame
 
         //-----------------------------------------------------------------------------------------------
 
-        JMenu langMenu = new JMenu("Язык");
+        JMenu langMenu = new JMenu(Localization.getLanguageLabel());
         testMenu.getAccessibleContext()
                 .setAccessibleDescription("Смена языка");
-
         {
             JMenuItem addChangeLocalizationItem = new JMenuItem("Сменить язык");
             addChangeLocalizationItem.addActionListener((event) -> {
-
-
-                //???
                 Localization.UpdateBundle();
-
                 setJMenuBar(generateMenuBar());
-
-                //this.invalidate();
-                //this.repaint();
-
                 Logger.debug("CHANGE LANG");
             });
             langMenu.add(addChangeLocalizationItem);

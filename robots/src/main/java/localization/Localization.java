@@ -91,9 +91,9 @@ public static String getGameField() {
 
 public static String getCommandsLabel() {return r.getString("commandsLabel");}
 
-public static String getExitConfirmation() {
-		return r.getString("exitConfirm");
-	}
+public static String getExitConfirmation() {return r.getString("exitConfirm");}
+
+public static String getLanguageLabel(){return r.getString("language");}
 
 //Не знаю как лучше
 //public static String getSomeMessage(String input){return r.getString(input);}

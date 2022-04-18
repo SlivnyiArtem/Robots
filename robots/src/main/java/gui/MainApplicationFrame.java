@@ -155,7 +155,7 @@ public class MainApplicationFrame extends JFrame
             {
                 JMenuItem addLogMessageItem = new JMenuItem(Localization.getTestMessageLogLabel(), KeyEvent.VK_E);
                 addLogMessageItem.addActionListener((event) -> {
-                    Logger.debug("Новая строка");
+                    Logger.debug(Localization.getNewStringDebug());
                 });
             }
         }
@@ -167,9 +167,9 @@ public class MainApplicationFrame extends JFrame
         testMenu.getAccessibleContext().setAccessibleDescription(Localization.getTestMenuLabel());
 
         {
-            JMenuItem addLogMessageItem = new JMenuItem("Сообщение в лог");
+            JMenuItem addLogMessageItem = new JMenuItem(Localization.getLogMessage());
             addLogMessageItem.addActionListener((event) -> {
-                Logger.debug("Новая строка");
+                Logger.debug(Localization.getNewStringDebug());
             });
             testMenu.add(addLogMessageItem);
         }
@@ -184,7 +184,7 @@ public class MainApplicationFrame extends JFrame
             addChangeLocalizationItem.addActionListener((event) -> {
                 Localization.UpdateBundle();
                 setJMenuBar(generateMenuBar());
-                Logger.debug("CHANGE LANG");
+                Logger.debug(Localization.getChangeLangDebug());
             });
             langMenu.add(addChangeLocalizationItem);
         }

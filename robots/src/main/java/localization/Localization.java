@@ -60,6 +60,8 @@ public class Localization {
 	public static String getTestLookUpTextItemSystemScheme() {
 		return r.getString("testLookUpTextItemSystemScheme");
 	}
+
+	public static String getExitConfirmationQuestion(){return r.getString("exiterConfirmation1");}
 	
 public static String getTestLookUpTextItemUniScheme() {
 	return r.getString("testLookUpTextItemUniScheme");
@@ -91,9 +93,17 @@ public static String getGameField() {
 
 public static String getCommandsLabel() {return r.getString("commandsLabel");}
 
-public static String getExitConfirmation() {return r.getString("exitConfirm");}
+public static String getExitConfirmation() {return r.getString("exiterConfirmation");}
 
 public static String getLanguageLabel(){return r.getString("language");}
+
+//public static String getExitConfirmationQuestion(){return r.getString("exiterConfirmation1");}
+
+public static String getNewStringDebug(){return r.getString("newStringDebug");}
+
+public static String getChangeLangDebug(){return r.getString("changeLang");}
+
+public static String getLogMessage(){return r.getString("logMessage");}
 
 //Не знаю как лучше
 //public static String getSomeMessage(String input){return r.getString(input);}

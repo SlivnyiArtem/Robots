@@ -2,7 +2,6 @@ package log;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 
 /**
  * Что починить:
@@ -15,18 +14,19 @@ import java.util.LinkedList;
  */
 public class LogWindowSource
 {
-    private final LinkedList<LogEntry> m_messages;
+    private int m_iQueueLength;
+    
+    private ArrayList<LogEntry> m_messages;
     private final ArrayList<LogChangeListener> m_listeners;
     private volatile LogChangeListener[] m_activeListeners;
-    private final int m_iQueueLength = 15;
-
-
-    public LogWindowSource()
-    {
-        m_messages = new LinkedList<>();
-        m_listeners = new ArrayList<>();
-    }
     
+    public LogWindowSource(int iQueueLength) 
+    {
+        m_iQueueLength = iQueueLength;
+        m_messages = new ArrayList<LogEntry>(iQueueLength);
+        m_listeners = new ArrayList<LogChangeListener>();
+    }
+
     public void registerListener(LogChangeListener listener)
     {
         synchronized(m_listeners)
@@ -48,27 +48,20 @@ public class LogWindowSource
     public void append(LogLevel logLevel, String strMessage)
     {
         LogEntry entry = new LogEntry(logLevel, strMessage);
-
         m_messages.add(entry);
-        System.out.println(m_messages.size());
-        if (m_messages.size() > m_iQueueLength) {
-            m_messages.removeFirst();
-        }
-
-        //LogChangeListener [] activeListeners = m_activeListeners;
-        if (m_activeListeners == null)
+        LogChangeListener [] activeListeners = m_activeListeners;
+        if (activeListeners == null)
         {
             synchronized (m_listeners)
             {
                 if (m_activeListeners == null)
                 {
-                    this.m_activeListeners = m_listeners.toArray(new LogChangeListener[0]);
-                    //activeListeners = m_listeners.toArray(new LogChangeListener [0]);
-                    //m_activeListeners = activeListeners;
+                    activeListeners = m_listeners.toArray(new LogChangeListener [0]);
+                    m_activeListeners = activeListeners;
                 }
             }
         }
-        for (LogChangeListener listener : m_activeListeners)
+        for (LogChangeListener listener : activeListeners)
         {
             listener.onLogChanged();
         }

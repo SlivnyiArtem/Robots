@@ -61,7 +61,6 @@ public class Localization {
 		return r.getString("testLookUpTextItemSystemScheme");
 	}
 
-	public static String getExitConfirmationQuestion(){return r.getString("exiterConfirmation1");}
 	
 public static String getTestLookUpTextItemUniScheme() {
 	return r.getString("testLookUpTextItemUniScheme");
@@ -97,7 +96,7 @@ public static String getExitConfirmation() {return r.getString("exiterConfirmati
 
 public static String getLanguageLabel(){return r.getString("language");}
 
-//public static String getExitConfirmationQuestion(){return r.getString("exiterConfirmation1");}
+public static String getExitConfirmationQuestion(){return r.getString("exiterConfirmationQuestion");}
 
 public static String getNewStringDebug(){return r.getString("newStringDebug");}
 

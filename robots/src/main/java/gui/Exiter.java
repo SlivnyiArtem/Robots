@@ -7,7 +7,7 @@ import javax.swing.JOptionPane;
 public class Exiter {
     public static int onExit() {
         var answerCode =
-                JOptionPane.showConfirmDialog(null, Localization.getExitConfirmation(),"", JOptionPane.YES_NO_OPTION);
+                JOptionPane.showConfirmDialog(null, Localization.getExitConfirmationQuestion(),Localization.getExitConfirmation(), JOptionPane.YES_NO_OPTION);
         return answerCode;
     }
 }

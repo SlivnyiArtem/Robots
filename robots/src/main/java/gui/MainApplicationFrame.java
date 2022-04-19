@@ -26,6 +26,10 @@ import log.Logger;
 public class MainApplicationFrame extends JFrame
 {
     private final JDesktopPane desktopPane = new JDesktopPane();
+    private LogWindow logWindow;
+    private ButtonWindow buttonWindow;
+    private GameWindow gameWindow;
+    
 
     //private CurrentLocalizationSettings localizationSettings;
     
@@ -40,13 +44,13 @@ public class MainApplicationFrame extends JFrame
 
         setContentPane(desktopPane);
         
-        LogWindow logWindow = createLogWindow();
+        logWindow = createLogWindow();
         addWindow(logWindow);
 
-        ButtonWindow buttonWindow = createButtonWindow();
+        buttonWindow = createButtonWindow();
         addWindow(buttonWindow);
 
-        GameWindow gameWindow = new GameWindow();
+        gameWindow = new GameWindow();
         gameWindow.setSize(400,  400);
         addWindow(gameWindow);
 
@@ -56,7 +60,7 @@ public class MainApplicationFrame extends JFrame
     
     protected LogWindow createLogWindow()
     {
-        LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource());
+        logWindow = new LogWindow(Logger.getDefaultLogSource());
         logWindow.setLocation(800,10);
         logWindow.setSize(300, 800);
         setMinimumSize(logWindow.getSize());
@@ -72,7 +76,7 @@ public class MainApplicationFrame extends JFrame
 
     protected ButtonWindow createButtonWindow()
     {
-        ButtonWindow buttonWindow = new ButtonWindow();
+        buttonWindow = new ButtonWindow();
         buttonWindow.setLocation(500,10);
         buttonWindow.setSize(300, 800);
         setMinimumSize(buttonWindow.getSize());
@@ -182,8 +186,13 @@ public class MainApplicationFrame extends JFrame
         {
             JMenuItem addChangeLocalizationItem = new JMenuItem("Сменить язык");
             addChangeLocalizationItem.addActionListener((event) -> {
+
                 Localization.UpdateBundle();
+
                 setJMenuBar(generateMenuBar());
+                logWindow.setTitle(Localization.getProtocolLabel());
+                buttonWindow.setTitle(Localization.getCommandsLabel());
+                gameWindow.setTitle(Localization.getGameField());
                 Logger.debug(Localization.getChangeLangDebug());
             });
             langMenu.add(addChangeLocalizationItem);

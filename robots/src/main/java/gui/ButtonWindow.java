@@ -5,18 +5,22 @@ import localization.Localization;
 import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
 import javax.swing.JButton;
-import java.awt.BorderLayout;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.function.Supplier;
 
 public class ButtonWindow extends JInternalFrame {
     private final GameVisualizer m_visualizer;
+    public ArrayList<ButtonItem> buttons;
 
     public ButtonWindow() {
         super(Localization.getCommandsLabel(), true, true, true, true);
         m_visualizer = new GameVisualizer();
         JPanel buttonPanel = new JPanel(new BorderLayout());
-        JButton exitButton = new JButton(Localization.getQuit());
+        //buttons.add(() -> Localization.getQuit());
+        var exitButton = new Button(Localization.getQuit());
         exitButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 /**
@@ -27,9 +31,19 @@ public class ButtonWindow extends JInternalFrame {
 
             }
         });
-        buttonPanel.add(exitButton);
+        buttons = new ArrayList<ButtonItem>();
+        buttons.add(new ButtonItem(Localization::getQuit, exitButton));
+        for (var button: buttons) {
+            buttonPanel.add(button.ItemButton);
+        }
         getContentPane().add(buttonPanel);
         pack();
+    }
+
+    public void updateButtonLabels(){
+        for (var button: buttons) {
+            button.updateItem();
+        }
     }
 
     @Override public void doDefaultCloseAction() {

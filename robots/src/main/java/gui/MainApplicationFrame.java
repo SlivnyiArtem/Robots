@@ -193,6 +193,7 @@ public class MainApplicationFrame extends JFrame
                 logWindow.setTitle(Localization.getProtocolLabel());
                 buttonWindow.setTitle(Localization.getCommandsLabel());
                 gameWindow.setTitle(Localization.getGameField());
+                buttonWindow.updateButtonLabels();
                 Logger.debug(Localization.getChangeLangDebug());
             });
             langMenu.add(addChangeLocalizationItem);

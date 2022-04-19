@@ -26,7 +26,6 @@ public class Localization {
 			e.printStackTrace();
 		}
 
-		System.out.println(r.getLocale());
 	}
 	
 	public static void changeLocale(LocalizationType language) {

@@ -24,8 +24,6 @@ public class CurrentLocalizationSettings {
 
     public static Locale getUpdateLocale() throws Exception {
         var current = getOrUpdateLangSettings();
-        //var current = CurrentLocalizationSettings.CurrentLanguageSetting;
-
 
         if (current.equals("ru")) {
             setLangSettings("en");
@@ -36,8 +34,6 @@ public class CurrentLocalizationSettings {
         else{
             throw new Exception("Unsupported Language");
         }
-
-        //System.out.println(current);
         //var newLocale = current.equals("ru") ? new Locale("en") : new Locale("ru");
         return new Locale(CurrentLanguageSetting);
     }

@@ -19,7 +19,6 @@ public class ButtonWindow extends JInternalFrame {
         super(Localization.getCommandsLabel(), true, true, true, true);
         m_visualizer = new GameVisualizer();
         JPanel buttonPanel = new JPanel(new BorderLayout());
-        //buttons.add(() -> Localization.getQuit());
         var exitButton = new Button(Localization.getQuit());
         exitButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -31,7 +30,7 @@ public class ButtonWindow extends JInternalFrame {
 
             }
         });
-        buttons = new ArrayList<ButtonItem>();
+        buttons = new ArrayList<>();
         buttons.add(new ButtonItem(Localization::getQuit, exitButton));
         for (var button: buttons) {
             buttonPanel.add(button.ItemButton);

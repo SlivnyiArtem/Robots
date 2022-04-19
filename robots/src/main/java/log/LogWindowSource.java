@@ -50,7 +50,7 @@ public class LogWindowSource
         LogEntry entry = new LogEntry(logLevel, strMessage);
 
         m_messages.add(entry);
-        System.out.println(m_messages.size());
+        //System.out.println(m_messages.size());
         if (m_messages.size() > m_iQueueLength) {
             m_messages.removeFirst();
         }

@@ -14,6 +14,10 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import gui.windows.ButtonWindow;
+import gui.windows.GameWindow;
+import gui.windows.GetLocalizeLabel;
+import gui.windows.LogWindow;
 import localization.Localization;
 import log.Logger;
 
@@ -23,12 +27,12 @@ import log.Logger;
  * Следует разделить его на серию более простых методов (или вообще выделить отдельный класс).
  *
  */
-public class MainApplicationFrame extends JFrame
+public class MainApplicationFrame extends JFrame implements GetLocalizeLabel
 {
     private final JDesktopPane desktopPane = new JDesktopPane();
     private LogWindow logWindow;
     private ButtonWindow buttonWindow;
-    private GameWindow gameWindow;
+    private final GameWindow gameWindow;
     
 
     //private CurrentLocalizationSettings localizationSettings;
@@ -65,7 +69,7 @@ public class MainApplicationFrame extends JFrame
         logWindow.setSize(300, 800);
         setMinimumSize(logWindow.getSize());
         logWindow.pack();
-        Logger.debug(Localization.getLoggerSuccess());
+        Logger.debug(GetLocalizeLabel.getLocalization("loggerSuccess"));
         return logWindow;
     }
 
@@ -122,14 +126,14 @@ public class MainApplicationFrame extends JFrame
     private JMenuBar generateMenuBar() {
         JMenuBar menuBar = new JMenuBar();
 
-        JMenu lookAndFeelMenu = new JMenu(Localization.getTestLookUpLabel());
+        JMenu lookAndFeelMenu = new JMenu(GetLocalizeLabel.getLocalization("testLookUpLabel"));
         lookAndFeelMenu.setMnemonic(KeyEvent.VK_V);
-        lookAndFeelMenu.getAccessibleContext().setAccessibleDescription(
-                Localization.getTestLookUpText());
+        lookAndFeelMenu.getAccessibleContext()
+                .setAccessibleDescription(GetLocalizeLabel.getLocalization("testLookUpText"));
 
         {
             JMenuItem systemLookAndFeel =
-                    new JMenuItem(Localization.getTestLookUpTextItemSystemScheme(), KeyEvent.VK_S);
+                    new JMenuItem(GetLocalizeLabel.getLocalization("testLookUpTextItemSystemScheme"), KeyEvent.VK_S);
             systemLookAndFeel.addActionListener((event) -> {
                 setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
                 this.invalidate();
@@ -139,7 +143,7 @@ public class MainApplicationFrame extends JFrame
 
         {
             JMenuItem crossplatformLookAndFeel =
-                    new JMenuItem(Localization.getTestLookUpTextItemUniScheme(), KeyEvent.VK_S);
+                    new JMenuItem(GetLocalizeLabel.getLocalization("testLookUpTextItemSystemScheme"), KeyEvent.VK_S);
             crossplatformLookAndFeel.addActionListener((event) -> {
                 setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
                 this.invalidate();
@@ -150,16 +154,20 @@ public class MainApplicationFrame extends JFrame
 
         var exitMenu = new JMenuItem(Localization.getQuit());
         exitMenu.addActionListener((event) -> {
-            Logger.debug(Localization.getExitConfirmation());
+            Logger.debug(GetLocalizeLabel.getLocalization("exiterConfirmation"));
             if (Exiter.onExit() == 0) System.exit(0);
         });
         {
-            exitMenu.getAccessibleContext().setAccessibleDescription( Localization.getTestLabel());
+            exitMenu.getAccessibleContext()
+                    .setAccessibleDescription(GetLocalizeLabel.getLocalization("testLabel"));
 
             {
-                JMenuItem addLogMessageItem = new JMenuItem(Localization.getTestMessageLogLabel(), KeyEvent.VK_E);
+                JMenuItem addLogMessageItem =
+                        new JMenuItem(GetLocalizeLabel
+                                .getLocalization("testMessageLogLabel"),
+                                KeyEvent.VK_E);
                 addLogMessageItem.addActionListener((event) -> {
-                    Logger.debug(Localization.getNewStringDebug());
+                    Logger.debug(GetLocalizeLabel.getLocalization("getNewStringDebug"));
                 });
             }
         }
@@ -167,20 +175,18 @@ public class MainApplicationFrame extends JFrame
 
         //-------------------------------------------------------------------------------------------------
 
-        JMenu testMenu = new JMenu(Localization.getTestLabel());
-        testMenu.getAccessibleContext().setAccessibleDescription(Localization.getTestMenuLabel());
-
+        var testMenu = new JMenu(GetLocalizeLabel.getLocalization("testLabel"));
         {
-            JMenuItem addLogMessageItem = new JMenuItem(Localization.getLogMessage());
+            JMenuItem addLogMessageItem = new JMenuItem(GetLocalizeLabel.getLocalization("logMessage"));
             addLogMessageItem.addActionListener((event) -> {
-                Logger.debug(Localization.getNewStringDebug());
+                Logger.debug(GetLocalizeLabel.getLocalization("newStringDebug"));
             });
             testMenu.add(addLogMessageItem);
         }
 
         //-----------------------------------------------------------------------------------------------
 
-        JMenu langMenu = new JMenu(Localization.getLanguageLabel());
+        JMenu langMenu = new JMenu(GetLocalizeLabel.getLocalization("language"));
         testMenu.getAccessibleContext()
                 .setAccessibleDescription("Смена языка");
         {
@@ -190,11 +196,11 @@ public class MainApplicationFrame extends JFrame
                 Localization.UpdateBundle();
 
                 setJMenuBar(generateMenuBar());
-                logWindow.setTitle(Localization.getProtocolLabel());
-                buttonWindow.setTitle(Localization.getCommandsLabel());
-                gameWindow.setTitle(Localization.getGameField());
+                logWindow.setTitle(GetLocalizeLabel.getLocalization("protocolLabel"));
+                buttonWindow.setTitle(GetLocalizeLabel.getLocalization("commandsLabel"));
+                gameWindow.setTitle(GetLocalizeLabel.getLocalization("localizationGameField"));
                 buttonWindow.updateButtonLabels();
-                Logger.debug(Localization.getChangeLangDebug());
+                Logger.debug(GetLocalizeLabel.getLocalization("changeLang"));
             });
             langMenu.add(addChangeLocalizationItem);
         }

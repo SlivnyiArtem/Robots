@@ -1,5 +1,8 @@
-package gui;
+package gui.windows;
 
+import gui.ButtonItem;
+import gui.Exiter;
+import gui.GameVisualizer;
 import localization.Localization;
 
 import javax.swing.JInternalFrame;
@@ -11,24 +14,23 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.function.Supplier;
 
-public class ButtonWindow extends JInternalFrame {
+public class ButtonWindow extends JInternalFrame implements GetLocalizeLabel {
     private final GameVisualizer m_visualizer;
     public ArrayList<ButtonItem> buttons;
 
     public ButtonWindow() {
-        super(Localization.getCommandsLabel(), true, true, true, true);
+        super(GetLocalizeLabel.getLocalization("commandsLabel"),
+                true, true, true, true);
         m_visualizer = new GameVisualizer();
         JPanel buttonPanel = new JPanel(new BorderLayout());
-        var exitButton = new Button(Localization.getQuit());
-        exitButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                /**
-                 * здесь мы вызываем сообщение о закрытии
-                 **/
-                var exitDialogResult = Exiter.onExit();
-                if (exitDialogResult == 0) System.exit(0);
+        var exitButton = new Button(GetLocalizeLabel.getLocalization("quit"));
+        exitButton.addActionListener(e -> {
+            /**
+             * здесь мы вызываем сообщение о закрытии
+             **/
+            var exitDialogResult = Exiter.onExit();
+            if (exitDialogResult == 0) System.exit(0);
 
-            }
         });
         buttons = new ArrayList<>();
         buttons.add(new ButtonItem(Localization::getQuit, exitButton));

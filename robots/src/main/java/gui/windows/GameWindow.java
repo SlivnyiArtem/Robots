@@ -1,5 +1,8 @@
-package gui;
+package gui.windows;
 
+import gui.Exiter;
+import gui.GameVisualizer;
+import gui.SizeState;
 import localization.Localization;
 
 import javax.swing.*;
@@ -9,13 +12,13 @@ import java.awt.event.*;
 import java.util.Observable;
 import java.util.Observer;
 
-public class GameWindow extends JInternalFrame implements SizeState{
+public class GameWindow extends JInternalFrame implements SizeState, GetLocalizeLabel {
     private final GameVisualizer m_visualizer;
     public double Hight;
     public double Weight;
 
     public GameWindow() {
-        super(Localization.getGameField(), true, true, true, true);
+        super(GetLocalizeLabel.getLocalization("localizationGameField"), true, true, true, true);
         m_visualizer = new GameVisualizer();
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(m_visualizer, BorderLayout.CENTER);

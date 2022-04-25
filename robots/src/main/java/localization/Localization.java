@@ -16,6 +16,10 @@ public class Localization {
 		}
 	}
 
+	public static ResourceBundle getResourceBundle() {
+		return r;
+	}
+
 	public static void UpdateBundle()
 	{
 		try {
@@ -31,10 +35,13 @@ public class Localization {
 	public static void changeLocale(LocalizationType language) {
 		r = ResourceBundle.getBundle(BUNDLE_STRING, new Locale(language.toString()));
 	}
-	
-	public static String getTestLabel() {
-		return r.getString("testLabel");
+
+	public static String getQuit() {
+		return r.getString("quit");
 	}
+
+	/*
+	public static String getTestLabel() {return r.getString("testLabel");}
 
 	public static String getTestMenuLabel() {
 		return r.getString("testDescription");
@@ -69,9 +76,7 @@ public static String getDocument() {
 	return r.getString("document");
 	}
 
-public static String getQuit() {
-	return r.getString("quit");
-	}
+
 
 public static String getNew() {
 	return r.getString("new");
@@ -102,7 +107,7 @@ public static String getNewStringDebug(){return r.getString("newStringDebug");}
 public static String getChangeLangDebug(){return r.getString("changeLang");}
 
 public static String getLogMessage(){return r.getString("logMessage");}
-
+	 */
 //Не знаю как лучше
 //public static String getSomeMessage(String input){return r.getString(input);}
 

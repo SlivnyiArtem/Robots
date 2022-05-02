@@ -8,24 +8,22 @@ import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
 
 import gui.Exiter;
-import localization.Localization;
 import log.LogChangeListener;
 import log.LogEntry;
 import log.LogWindowSource;
 
-public class LogWindow extends JInternalFrame implements LogChangeListener, GetLocalizeLabel
-{
+public class LogWindow extends JInternalFrame implements LogChangeListener, GetLocalizeLabel {
     private final LogWindowSource m_logSource;
     private final TextArea m_logContent;
 
-    public LogWindow(LogWindowSource logSource) 
-    {
-        super(GetLocalizeLabel.getLocalization("protocolLabel"), true, true, true, true);
+    public LogWindow(LogWindowSource logSource) {
+        super(GetLocalizeLabel.getLocalization("protocolLabel"),
+                true, true, true, true);
         m_logSource = logSource;
         m_logSource.registerListener(this);
         m_logContent = new TextArea("");
         m_logContent.setSize(200, 500);
-        
+
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(m_logContent, BorderLayout.CENTER);
         getContentPane().add(panel);
@@ -33,26 +31,25 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, GetL
         updateLogContent();
     }
 
-    private void updateLogContent()
-    {
+    private void updateLogContent() {
         StringBuilder content = new StringBuilder();
-        for (LogEntry entry : m_logSource.all())
-        {
+        for (LogEntry entry : m_logSource.all()) {
             content.append(entry.getMessage()).append("\n");
         }
         m_logContent.setText(content.toString());
         m_logContent.invalidate();
     }
 
-    @Override public void doDefaultCloseAction() {
+    @Override
+    public void doDefaultCloseAction() {
+        m_logSource.unregisterListener(this);
         var confirmResult = Exiter.onExit();
         if (confirmResult == 0)
             super.doDefaultCloseAction();
     }
-    
+
     @Override
-    public void onLogChanged()
-    {
+    public void onLogChanged() {
         EventQueue.invokeLater(this::updateLogContent);
     }
 }

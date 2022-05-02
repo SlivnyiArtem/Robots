@@ -2,13 +2,15 @@ package gui;
 
 import gui.windows.GetLocalizeLabel;
 
-import javax.swing.*;
+import javax.swing.JOptionPane;
 
 public class Exiter implements GetLocalizeLabel {
     public static int onExit() {
-        Object[] options = {GetLocalizeLabel
-                .getLocalization("exitConfirmYesOption"),
-                GetLocalizeLabel.getLocalization("exitConfirmNoOption")};
+        Object[] options = {
+                GetLocalizeLabel
+                        .getLocalization("exitConfirmYesOption"),
+                GetLocalizeLabel.getLocalization("exitConfirmNoOption")
+        };
         return JOptionPane.showOptionDialog(null,
                 GetLocalizeLabel.getLocalization("exiterConfirmationQuestion"),
                 GetLocalizeLabel.getLocalization("exiterConfirmation"),

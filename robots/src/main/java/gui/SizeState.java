@@ -1,5 +1,5 @@
 package gui;
 
 public interface SizeState {
-    void update(double Weight, double Hight);
+    void update(double Weight, double Height);
 }

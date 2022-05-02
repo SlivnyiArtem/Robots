@@ -3,7 +3,7 @@ package gui;
 import localization.Localization;
 
 import javax.swing.*;
-import java.awt.*;
+import java.awt.Button;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -12,12 +12,12 @@ public class ButtonItem {
     public Button ItemButton;
 
 
-    public ButtonItem(Supplier<String> supplier, Button button){
+    public ButtonItem(Supplier<String> supplier, Button button) {
         TitleSupplier = supplier;
         ItemButton = button;
     }
 
-    public void updateItem(){
+    public void updateItem() {
         ItemButton.setLabel(TitleSupplier.get());
     }
 }

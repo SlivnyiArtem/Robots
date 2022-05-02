@@ -5,20 +5,19 @@ import java.util.Locale;
 public class CurrentLocalizationSettings {
     private static volatile String CurrentLanguageSetting;
 
-    private static String getOrUpdateLangSettings(){
+    private static String getOrUpdateLangSettings() {
         if (CurrentLanguageSetting == null)
             CurrentLanguageSetting = "ru";
         return CurrentLanguageSetting;
     }
 
 
-    public CurrentLocalizationSettings(String locale)
-    {
+    public CurrentLocalizationSettings(String locale) {
         CurrentLanguageSetting = locale;
     }
 
 
-    private static void setLangSettings(String newLangSettings){
+    private static void setLangSettings(String newLangSettings) {
         CurrentLanguageSetting = newLangSettings;
     }
 
@@ -27,14 +26,11 @@ public class CurrentLocalizationSettings {
 
         if (current.equals("ru")) {
             setLangSettings("en");
-        }
-        else if(current.equals("en")){
+        } else if (current.equals("en")) {
             setLangSettings("ru");
-        }
-        else{
+        } else {
             throw new Exception("Unsupported Language");
         }
-        //var newLocale = current.equals("ru") ? new Locale("en") : new Locale("ru");
         return new Locale(CurrentLanguageSetting);
     }
 }

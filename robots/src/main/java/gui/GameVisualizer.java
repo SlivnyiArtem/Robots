@@ -11,7 +11,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.AffineTransform;
 import java.io.Console;
-import java.util.*;
+import java.util.TimerTask;
 import java.util.Timer;
 
 import javax.swing.*;
@@ -61,6 +61,7 @@ public class GameVisualizer extends JPanel {
     private static Timer initTimer() {
         return new Timer("events generator", true);
     }
+
     protected void setTargetPosition(Point p) { // просто обновление переменных цели
         m_targetPositionX = p.x;
         m_targetPositionY = p.y;
@@ -70,7 +71,6 @@ public class GameVisualizer extends JPanel {
         EventQueue.invokeLater(this::repaint);
     }
     // Вызывает на следующем тике потока событий
-    //this::repaint     - вызов метода this.repaint для элемента который был помещен в очередь обработки собтий???
 
     private static double distance(double x1, double y1, double x2, double y2) {
         double diffX = x1 - x2;
@@ -86,7 +86,7 @@ public class GameVisualizer extends JPanel {
         double polarCoordinates = Math.atan2(diffY, diffX); // преобразовали в полярные координаты
         return asNormalizedRadians(polarCoordinates);
     }
-    //
+
 
     protected void onModelUpdateEvent() { // происходит на каждом обновлении состояния приложения
         double distance = distance(m_targetPositionX, m_targetPositionY,
@@ -122,11 +122,13 @@ public class GameVisualizer extends JPanel {
 
     // Выход с другого края доски
     private void tryStartOutTheDifferentBorder() {
-        if (m_robotPositionX > CurrentBorderRight ||m_robotPositionX < 0) {
-            m_robotPositionX = CurrentBorderRight - m_robotPositionX;
-        }
-        if (m_robotPositionY > CurrentBorderDown ||m_robotPositionY < 0) {
-            m_robotPositionY = CurrentBorderDown - m_robotPositionY;
+        synchronized (this) {
+            if (m_robotPositionX > CurrentBorderRight || m_robotPositionX < 0) {
+                m_robotPositionX = CurrentBorderRight - m_robotPositionX;
+            }
+            if (m_robotPositionY > CurrentBorderDown || m_robotPositionY < 0) {
+                m_robotPositionY = CurrentBorderDown - m_robotPositionY;
+            }
         }
     }
 
@@ -152,8 +154,7 @@ public class GameVisualizer extends JPanel {
         m_robotPositionX = newX;
         m_robotPositionY = newY;
 
-        double newDirection = asNormalizedRadians(m_robotDirection + angularVelocity * movementDuration);
-        m_robotDirection = newDirection;
+        m_robotDirection = asNormalizedRadians(m_robotDirection + angularVelocity * movementDuration);
     }
 
     private static double asNormalizedRadians(double angle) {
@@ -218,11 +219,8 @@ public class GameVisualizer extends JPanel {
         fillAndDrawOval(g, x, y, Color.GREEN, Color.black, 5, 5);
     }
 
-
-    //GameWindow a = new GameWindow();
-    public void setWH(double w, double h){
+    public void setWH(double w, double h) {
         this.CurrentBorderDown = h;
         this.CurrentBorderRight = w;
-        }
     }
-
+}

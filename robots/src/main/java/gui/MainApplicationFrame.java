@@ -23,31 +23,26 @@ import log.Logger;
 
 /**
  * Что требуется сделать:
- * 1. Метод создания меню перегружен функционалом и трудно читается. 
+ * 1. Метод создания меню перегружен функционалом и трудно читается.
  * Следует разделить его на серию более простых методов (или вообще выделить отдельный класс).
- *
  */
-public class MainApplicationFrame extends JFrame implements GetLocalizeLabel
-{
+public class MainApplicationFrame extends JFrame implements GetLocalizeLabel {
     private final JDesktopPane desktopPane = new JDesktopPane();
     private LogWindow logWindow;
     private ButtonWindow buttonWindow;
     private final GameWindow gameWindow;
-    
 
-    //private CurrentLocalizationSettings localizationSettings;
-    
     public MainApplicationFrame() {
         //Make the big window be indented 50 pixels from each edge
         //of the screen.
-        int inset = 50;        
+        int inset = 50;
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setBounds(inset, inset,
-            screenSize.width  - inset*2,
-            screenSize.height - inset*2);
+                screenSize.width - inset * 2,
+                screenSize.height - inset * 2);
 
         setContentPane(desktopPane);
-        
+
         logWindow = createLogWindow();
         addWindow(logWindow);
 
@@ -55,17 +50,16 @@ public class MainApplicationFrame extends JFrame implements GetLocalizeLabel
         addWindow(buttonWindow);
 
         gameWindow = new GameWindow();
-        gameWindow.setSize(400,  400);
+        gameWindow.setSize(400, 400);
         addWindow(gameWindow);
 
         setJMenuBar(generateMenuBar());
         setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
-    
-    protected LogWindow createLogWindow()
-    {
+
+    protected LogWindow createLogWindow() {
         logWindow = new LogWindow(Logger.getDefaultLogSource());
-        logWindow.setLocation(800,10);
+        logWindow.setLocation(800, 10);
         logWindow.setSize(300, 800);
         setMinimumSize(logWindow.getSize());
         logWindow.pack();
@@ -73,60 +67,86 @@ public class MainApplicationFrame extends JFrame implements GetLocalizeLabel
         return logWindow;
     }
 
-    //protected void createLocalizationSettings()
-    //{
-        //localizationSettings = new CurrentLocalizationSettings("ru");
-    //}
-
-    protected ButtonWindow createButtonWindow()
-    {
+    protected ButtonWindow createButtonWindow() {
         buttonWindow = new ButtonWindow();
-        buttonWindow.setLocation(500,10);
+        buttonWindow.setLocation(500, 10);
         buttonWindow.setSize(300, 800);
         setMinimumSize(buttonWindow.getSize());
         buttonWindow.pack();
         return buttonWindow;
     }
-    
-    protected void addWindow(JInternalFrame frame)
-    {
+
+    protected void addWindow(JInternalFrame frame) {
         desktopPane.add(frame);
         frame.setVisible(true);
     }
-    
-//    protected JMenuBar createMenuBar() {
-//        JMenuBar menuBar = new JMenuBar();
-// 
-//        //Set up the lone menu.
-//        JMenu menu = new JMenu("Document");
-//        menu.setMnemonic(KeyEvent.VK_D);
-//        menuBar.add(menu);
-// 
-//        //Set up the first menu item.
-//        JMenuItem menuItem = new JMenuItem("New");
-//        menuItem.setMnemonic(KeyEvent.VK_N);
-//        menuItem.setAccelerator(KeyStroke.getKeyStroke(
-//                KeyEvent.VK_N, ActionEvent.ALT_MASK));
-//        menuItem.setActionCommand("new");
-////        menuItem.addActionListener(this);
-//        menu.add(menuItem);
-// 
-//        //Set up the second menu item.
-//        menuItem = new JMenuItem("Quit");
-//        menuItem.setMnemonic(KeyEvent.VK_Q);
-//        menuItem.setAccelerator(KeyStroke.getKeyStroke(
-//                KeyEvent.VK_Q, ActionEvent.ALT_MASK));
-//        menuItem.setActionCommand("quit");
-////        menuItem.addActionListener(this);
-//        menu.add(menuItem);
-// 
-//        return menuBar;
-//    }
-    
+
     private JMenuBar generateMenuBar() {
         JMenuBar menuBar = new JMenuBar();
+        menuBar.add(GetLookAndFeelMenu());
+        menuBar.add(GetTestMenu());
+        menuBar.add(GetExitMenu());
+        menuBar.add(GetLangMenu());
+        return menuBar;
+    }
 
-        JMenu lookAndFeelMenu = new JMenu(GetLocalizeLabel.getLocalization("testLookUpLabel"));
+    private JMenu GetLangMenu() {
+        JMenu langMenu = new JMenu(GetLocalizeLabel.getLocalization("language"));
+        langMenu.getAccessibleContext()
+                .setAccessibleDescription("Смена языка");
+        {
+            JMenuItem addChangeLocalizationItem = new JMenuItem("Сменить язык");
+            addChangeLocalizationItem.addActionListener((event) -> {
+
+                Localization.UpdateBundle();
+
+                setJMenuBar(generateMenuBar());
+                logWindow.setTitle(GetLocalizeLabel.getLocalization("protocolLabel"));
+                buttonWindow.setTitle(GetLocalizeLabel.getLocalization("commandsLabel"));
+                gameWindow.setTitle(GetLocalizeLabel.getLocalization("localizationGameField"));
+                buttonWindow.updateButtonLabels();
+                Logger.debug(GetLocalizeLabel.getLocalization("changeLang"));
+            });
+            langMenu.add(addChangeLocalizationItem);
+        }
+        return langMenu;
+    }
+
+    private JMenuItem GetExitMenu() {
+        var exitMenu = new JMenuItem(Localization.getQuit());
+        exitMenu.addActionListener((event) -> {
+            Logger.debug(GetLocalizeLabel.getLocalization("exiterConfirmation"));
+            if (Exiter.onExit() == 0) System.exit(0);
+        });
+        {
+            exitMenu.getAccessibleContext()
+                    .setAccessibleDescription(GetLocalizeLabel.getLocalization("testLabel"));
+
+            {
+                JMenuItem addLogMessageItem =
+                        new JMenuItem(GetLocalizeLabel
+                                .getLocalization("testMessageLogLabel"),
+                                KeyEvent.VK_E);
+                addLogMessageItem.addActionListener((event) ->
+                        Logger.debug(GetLocalizeLabel.getLocalization("getNewStringDebug")));
+            }
+        }
+        return exitMenu;
+    }
+
+    private JMenu GetTestMenu() {
+        var testMenu = new JMenu(GetLocalizeLabel.getLocalization("testLabel"));
+        {
+            JMenuItem addLogMessageItem = new JMenuItem(GetLocalizeLabel.getLocalization("logMessage"));
+            addLogMessageItem.addActionListener((event) ->
+                    Logger.debug(GetLocalizeLabel.getLocalization("newStringDebug")));
+            testMenu.add(addLogMessageItem);
+        }
+        return testMenu;
+    }
+
+    private JMenu GetLookAndFeelMenu() {
+        var lookAndFeelMenu = new JMenu(GetLocalizeLabel.getLocalization("testLookUpLabel"));
         lookAndFeelMenu.setMnemonic(KeyEvent.VK_V);
         lookAndFeelMenu.getAccessibleContext()
                 .setAccessibleDescription(GetLocalizeLabel.getLocalization("testLookUpText"));
@@ -150,81 +170,15 @@ public class MainApplicationFrame extends JFrame implements GetLocalizeLabel
             });
             lookAndFeelMenu.add(crossplatformLookAndFeel);
         }
-        //----------------------------------------------------------------------------------------------------
-
-        var exitMenu = new JMenuItem(Localization.getQuit());
-        exitMenu.addActionListener((event) -> {
-            Logger.debug(GetLocalizeLabel.getLocalization("exiterConfirmation"));
-            if (Exiter.onExit() == 0) System.exit(0);
-        });
-        {
-            exitMenu.getAccessibleContext()
-                    .setAccessibleDescription(GetLocalizeLabel.getLocalization("testLabel"));
-
-            {
-                JMenuItem addLogMessageItem =
-                        new JMenuItem(GetLocalizeLabel
-                                .getLocalization("testMessageLogLabel"),
-                                KeyEvent.VK_E);
-                addLogMessageItem.addActionListener((event) -> {
-                    Logger.debug(GetLocalizeLabel.getLocalization("getNewStringDebug"));
-                });
-            }
-        }
-
-
-        //-------------------------------------------------------------------------------------------------
-
-        var testMenu = new JMenu(GetLocalizeLabel.getLocalization("testLabel"));
-        {
-            JMenuItem addLogMessageItem = new JMenuItem(GetLocalizeLabel.getLocalization("logMessage"));
-            addLogMessageItem.addActionListener((event) -> {
-                Logger.debug(GetLocalizeLabel.getLocalization("newStringDebug"));
-            });
-            testMenu.add(addLogMessageItem);
-        }
-
-        //-----------------------------------------------------------------------------------------------
-
-        JMenu langMenu = new JMenu(GetLocalizeLabel.getLocalization("language"));
-        testMenu.getAccessibleContext()
-                .setAccessibleDescription("Смена языка");
-        {
-            JMenuItem addChangeLocalizationItem = new JMenuItem("Сменить язык");
-            addChangeLocalizationItem.addActionListener((event) -> {
-
-                Localization.UpdateBundle();
-
-                setJMenuBar(generateMenuBar());
-                logWindow.setTitle(GetLocalizeLabel.getLocalization("protocolLabel"));
-                buttonWindow.setTitle(GetLocalizeLabel.getLocalization("commandsLabel"));
-                gameWindow.setTitle(GetLocalizeLabel.getLocalization("localizationGameField"));
-                buttonWindow.updateButtonLabels();
-                Logger.debug(GetLocalizeLabel.getLocalization("changeLang"));
-            });
-            langMenu.add(addChangeLocalizationItem);
-        }
-
-
-
-        //-----------------------------------------------------------------------------------------------
-        menuBar.add(lookAndFeelMenu);
-        menuBar.add(testMenu);
-        menuBar.add(exitMenu);
-        menuBar.add(langMenu);
-        return menuBar;
+        return lookAndFeelMenu;
     }
-    
-    private void setLookAndFeel(String className)
-    {
-        try
-        {
+
+    private void setLookAndFeel(String className) {
+        try {
             UIManager.setLookAndFeel(className);
             SwingUtilities.updateComponentTreeUI(this);
-        }
-        catch (ClassNotFoundException | InstantiationException
-            | IllegalAccessException | UnsupportedLookAndFeelException e)
-        {
+        } catch (ClassNotFoundException | InstantiationException |
+                IllegalAccessException | UnsupportedLookAndFeelException e) {
             // just ignore
         }
     }

@@ -1,5 +1,9 @@
 package log;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -13,16 +17,25 @@ import java.util.LinkedList;
  * величиной m_iQueueLength (т.е. реально нужна очередь сообщений
  * ограниченного размера)
  */
+
+@Data
 public class LogWindowSource {
-    private final LinkedList<LogEntry> m_messages;
-    private final ArrayList<LogChangeListener> m_listeners;
+    public final LinkedList<LogEntry> m_messages;
+    public final ArrayList<LogChangeListener> m_listeners;
+    //@JsonIgnore
     private volatile LogChangeListener[] m_activeListeners;
+    //@JsonIgnore
     private final int m_iQueueLength = 5;
 
 
     public LogWindowSource(int i) {
         m_messages = new LinkedList<>();
         m_listeners = new ArrayList<>();
+    }
+
+    public LogWindowSource(LinkedList<LogEntry> messages, ArrayList<LogChangeListener> listeners) {
+        m_messages = messages;
+        m_listeners = listeners;
     }
 
     public void registerListener(LogChangeListener listener) {

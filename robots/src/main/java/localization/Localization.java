@@ -36,4 +36,5 @@ public class Localization {
     public static String getQuit() {
         return r.getString("quit");
     }
+    public static String getLoad(){return "load";}
 }

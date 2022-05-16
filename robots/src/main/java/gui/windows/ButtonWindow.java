@@ -4,6 +4,7 @@ import gui.ButtonItem;
 import gui.Exiter;
 import gui.GameVisualizer;
 import localization.Localization;
+import log.Logger;
 
 import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
@@ -30,8 +31,18 @@ public class ButtonWindow extends JInternalFrame implements GetLocalizeLabel {
             if (exitDialogResult == 0) System.exit(0);
 
         });
+
+        var loadPreviousSessionButton = new Button("Session");
+        loadPreviousSessionButton.addActionListener(e -> {
+            var exitDialogResult = Exiter.onExit();
+            if (exitDialogResult == 0){
+
+            }
+        });
+
         buttons = new ArrayList<>();
         buttons.add(new ButtonItem(Localization::getQuit, exitButton));
+        //buttons.add(new ButtonItem(Localization::getLoad, loadPreviousSessionButton));
         for (var button: buttons) {
             buttonPanel.add(button.ItemButton);
         }

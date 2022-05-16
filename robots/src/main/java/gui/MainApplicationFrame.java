@@ -3,6 +3,7 @@ package gui;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
@@ -32,7 +33,7 @@ public class MainApplicationFrame extends JFrame implements GetLocalizeLabel {
     private ButtonWindow buttonWindow;
     private final GameWindow gameWindow;
 
-    public MainApplicationFrame() {
+    public MainApplicationFrame() throws IOException {
         //Make the big window be indented 50 pixels from each edge
         //of the screen.
         int inset = 50;
@@ -57,7 +58,7 @@ public class MainApplicationFrame extends JFrame implements GetLocalizeLabel {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
 
-    protected LogWindow createLogWindow() {
+    protected LogWindow createLogWindow() throws IOException {
         logWindow = new LogWindow(Logger.getDefaultLogSource());
         logWindow.setLocation(800, 10);
         logWindow.setSize(300, 800);

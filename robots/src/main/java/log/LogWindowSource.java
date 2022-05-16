@@ -1,6 +1,9 @@
 package log;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -17,8 +20,14 @@ import java.util.LinkedList;
  * величиной m_iQueueLength (т.е. реально нужна очередь сообщений
  * ограниченного размера)
  */
-
+/*
 @Data
+@Builder
+//@NoArgsConstructor
+@AllArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
+
+ */
 public class LogWindowSource {
     public final LinkedList<LogEntry> m_messages;
     public final ArrayList<LogChangeListener> m_listeners;

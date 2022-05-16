@@ -3,26 +3,29 @@ package gui.windows;
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.TextArea;
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
 
 import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.util.JSONPObject;
 import gui.Exiter;
 import log.LogChangeListener;
 import log.LogEntry;
+import log.LogLevel;
 import log.LogWindowSource;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.json.JSONObject;
 import serialization.JsonStringWriter;
-
 
 public class LogWindow extends JInternalFrame implements LogChangeListener, GetLocalizeLabel {
     private LogWindowSource notFinalLogSource;
@@ -42,20 +45,33 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, GetL
                 ".\\src\\main\\java\\serialization\\LogWindowSerialization"));
         json = reader.readLine();
 
-        /*
+
         if (json != null && json.length()>0){
             var exitDialogResult = Exiter.onExit();
             if (exitDialogResult == 0){
-                LogWindowSource l = objectMapper.readValue(json, LogWindowSource.class);
+                var jsonArray = new JSONObject(json).getJSONArray("m_messages");
+                var logEntryList = new LinkedList<LogEntry>();
+                if (jsonArray != null) {
+                    for (int i=0;i<jsonArray.length();i++){
+                        var jsonObject = jsonArray.getJSONObject(i);
+                        var log = new LogEntry(LogLevel.valueOf(jsonObject.getString("level")),
+                                jsonObject.getString("message"));
+                        logEntryList.add(log);
+                        notFinalLogSource = new LogWindowSource(logEntryList, new ArrayList<>());
+                    }
+                }
             }
         }
         if (notFinalLogSource == null)
             notFinalLogSource = logSource;
         m_logSource = notFinalLogSource;
 
-         */
 
-        m_logSource = objectMapper.readValue(json, LogWindowSource.class);
+
+
+
+
+
 
         m_logSource.registerListener(this);
         m_logContent = new TextArea("");

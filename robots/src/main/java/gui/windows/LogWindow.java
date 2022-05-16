@@ -4,26 +4,15 @@ import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.TextArea;
 import java.io.*;
-import java.util.ArrayList;
 import java.util.LinkedList;
 
 import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.util.JSONPObject;
-import gui.Exiter;
-import log.LogChangeListener;
-import log.LogEntry;
-import log.LogLevel;
-import log.LogWindowSource;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import gui.Dialoger;
+import log.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.json.JSONObject;
 import serialization.JsonStringWriter;
 
@@ -38,7 +27,7 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, GetL
                 true, true, true, true);
 
 
-        ObjectMapper objectMapper = new ObjectMapper();
+        //ObjectMapper objectMapper = new ObjectMapper();
         BufferedReader reader;
         String json;
         reader = new BufferedReader(new FileReader(
@@ -47,8 +36,8 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, GetL
 
 
         if (json != null && json.length()>0){
-            var exitDialogResult = Exiter.onExit();
-            if (exitDialogResult == 0){
+            var recoveryDialogResult = Dialoger.confirmRecovery();
+            if (recoveryDialogResult == 0){
                 var jsonArray = new JSONObject(json).getJSONArray("m_messages");
                 var logEntryList = new LinkedList<LogEntry>();
                 if (jsonArray != null) {
@@ -57,7 +46,10 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, GetL
                         var log = new LogEntry(LogLevel.valueOf(jsonObject.getString("level")),
                                 jsonObject.getString("message"));
                         logEntryList.add(log);
-                        notFinalLogSource = new LogWindowSource(logEntryList, new ArrayList<>());
+                        notFinalLogSource = Logger.getDefaultLogSource();
+                        for (LogEntry logEntry:logEntryList) {
+                            notFinalLogSource.append(logEntry.getLevel(), logEntry.getMessage());
+                        }
                     }
                 }
             }
@@ -150,7 +142,7 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, GetL
     @Override
     public void doDefaultCloseAction(){
         m_logSource.unregisterListener(this);
-        var confirmResult = Exiter.onExit();
+        var confirmResult = Dialoger.onExit();
         if (confirmResult == 0) {
             //за джейсонить ресурсы
             ObjectMapper objectMapper = new ObjectMapper();

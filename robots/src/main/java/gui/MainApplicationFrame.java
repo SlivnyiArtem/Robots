@@ -117,7 +117,7 @@ public class MainApplicationFrame extends JFrame implements GetLocalizeLabel {
         var exitMenu = new JMenuItem(Localization.getQuit());
         exitMenu.addActionListener((event) -> {
             Logger.debug(GetLocalizeLabel.getLocalization("exiterConfirmation"));
-            if (Exiter.onExit() == 0) System.exit(0);
+            if (Dialoger.onExit() == 0) System.exit(0);
         });
         {
             exitMenu.getAccessibleContext()

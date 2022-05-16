@@ -1,17 +1,15 @@
 package gui.windows;
 
 import gui.ButtonItem;
-import gui.Exiter;
+import gui.Dialoger;
 import gui.GameVisualizer;
 import localization.Localization;
-import log.Logger;
 
 import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Button;
 import java.util.ArrayList;
-import java.util.function.Supplier;
 
 public class ButtonWindow extends JInternalFrame implements GetLocalizeLabel {
     private final GameVisualizer m_visualizer;
@@ -27,14 +25,14 @@ public class ButtonWindow extends JInternalFrame implements GetLocalizeLabel {
             /**
              * здесь мы вызываем сообщение о закрытии
              **/
-            var exitDialogResult = Exiter.onExit();
+            var exitDialogResult = Dialoger.onExit();
             if (exitDialogResult == 0) System.exit(0);
 
         });
 
         var loadPreviousSessionButton = new Button("Session");
         loadPreviousSessionButton.addActionListener(e -> {
-            var exitDialogResult = Exiter.onExit();
+            var exitDialogResult = Dialoger.onExit();
             if (exitDialogResult == 0){
 
             }
@@ -57,7 +55,7 @@ public class ButtonWindow extends JInternalFrame implements GetLocalizeLabel {
     }
 
     @Override public void doDefaultCloseAction() {
-        var confirmResult = Exiter.onExit();
+        var confirmResult = Dialoger.onExit();
         if (confirmResult == 0)
             super.doDefaultCloseAction();
     }

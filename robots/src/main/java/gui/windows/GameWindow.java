@@ -1,27 +1,62 @@
 package gui.windows;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import gui.Dialoger;
 import gui.GameVisualizer;
 import gui.SizeState;
-import serialization.JsonStringWriter;
+import lombok.SneakyThrows;
 
 import javax.swing.JPanel;
 import javax.swing.JInternalFrame;
 import java.awt.BorderLayout;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import org.json.JSONObject;
 
 public class GameWindow extends JInternalFrame implements SizeState, GetLocalizeLabel {
-    private final GameVisualizer m_visualizer;
+    public final GameVisualizer m_visualizer;
+    private GameVisualizer notFinalVisualizer;
     public double Hight;
     public double Weight;
+    public JPanel panel;
 
-    public GameWindow() {
+    public GameWindow() throws IOException {
         super(GetLocalizeLabel.getLocalization("localizationGameField"),
                 true, true, true, true);
-        m_visualizer = new GameVisualizer();
+        BufferedReader reader;
+        String stingJson;
+        reader = new BufferedReader(new FileReader(
+                ".\\src\\main\\java\\serialization\\GameWindowSerialization"));
+        stingJson = reader.readLine();
+        if (stingJson != null && stingJson.length()>0){
+            var recoveryDialogResult = Dialoger.confirmRecovery();
+            if (recoveryDialogResult == 0){
+                var jsonObject = new JSONObject(stingJson);
+
+                var currentBorderRight = jsonObject.getDouble("CurrentBorderRight");
+                var CurrentBorderDown = jsonObject.getDouble("CurrentBorderDown");
+                var robotPositionX = jsonObject.getDouble("m_robotPositionX");
+                var robotPositionY = jsonObject.getDouble("m_robotPositionY");
+                var robotDirection = jsonObject.getDouble("m_robotDirection");
+                var targetPositionX = jsonObject.getDouble("m_targetPositionX");
+                var targetPositionY = jsonObject.getDouble("m_targetPositionY");
+
+                notFinalVisualizer = new GameVisualizer(currentBorderRight, CurrentBorderDown, robotPositionX, robotPositionY, robotDirection,
+                        targetPositionX,targetPositionY);
+
+            }
+        }
+        if (notFinalVisualizer == null){
+            m_visualizer = new GameVisualizer();
+        }
+        else{
+            m_visualizer = notFinalVisualizer;
+        }
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(m_visualizer, BorderLayout.CENTER);
         getContentPane().add(panel);
@@ -33,27 +68,38 @@ public class GameWindow extends JInternalFrame implements SizeState, GetLocalize
                 update(Hight, Weight);
             }
         });
+
     }
 
+    @SneakyThrows
     @Override
     public void doDefaultCloseAction() {
+
         var confirmResult = Dialoger.onExit();
         if (confirmResult == 0) {
-            //сохранить в JSON ресурсы GameWindow
-            ObjectMapper objectMapper = new ObjectMapper();
-            try {
-                String json =objectMapper.writeValueAsString(m_visualizer);
-                JsonStringWriter.WriteJsonString(json, ".\\src\\main\\java\\serialization\\GameWindowSerialization");
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
-            }
+
+            GsonBuilder builder = new GsonBuilder();
+            Gson gson = builder.create();
+            FileWriter writer = new FileWriter(".\\src\\main\\java\\serialization\\GameWindowSerialization");
+            var jsonObj = new JSONObject();
+            putObjectsInJSONObject(jsonObj,m_visualizer);
+            writer.write(jsonObj.toString());
+            writer.close();
             super.doDefaultCloseAction();
         }
     }
 
-
     @Override
-    public void update(double w, double Height) {
+    public void update(double w, double Height){
         m_visualizer.setWH(Weight, Hight);
+    }
+    public static void putObjectsInJSONObject(JSONObject jsonObj, GameVisualizer m_visualizer){
+        jsonObj.put("m_robotPositionX", m_visualizer.m_robotPositionX);
+        jsonObj.put("m_robotPositionY", m_visualizer.m_robotPositionY);
+        jsonObj.put("m_robotDirection", m_visualizer.m_robotDirection);
+        jsonObj.put("m_targetPositionX",m_visualizer.m_targetPositionX);
+        jsonObj.put("m_targetPositionY",m_visualizer.m_targetPositionY);
+        jsonObj.put("CurrentBorderRight", m_visualizer.CurrentBorderRight);
+        jsonObj.put("CurrentBorderDown", m_visualizer.CurrentBorderDown);
     }
 }

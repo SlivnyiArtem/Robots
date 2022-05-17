@@ -9,12 +9,11 @@ import java.util.LinkedList;
 import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import gui.Dialoger;
 import log.*;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.json.JSONObject;
-import serialization.JsonStringWriter;
+import lombok.SneakyThrows;
 
 public class LogWindow extends JInternalFrame implements LogChangeListener, GetLocalizeLabel {
     private LogWindowSource notFinalLogSource;
@@ -25,46 +24,36 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, GetL
     public LogWindow(LogWindowSource logSource) throws IOException {
         super(GetLocalizeLabel.getLocalization("protocolLabel"),
                 true, true, true, true);
-
-
-        //ObjectMapper objectMapper = new ObjectMapper();
         BufferedReader reader;
         String json;
         reader = new BufferedReader(new FileReader(
                 ".\\src\\main\\java\\serialization\\LogWindowSerialization"));
         json = reader.readLine();
-
-
+        GsonBuilder builder = new GsonBuilder();
+        Gson gson = builder.create();
         if (json != null && json.length()>0){
             var recoveryDialogResult = Dialoger.confirmRecovery();
             if (recoveryDialogResult == 0){
-                var jsonArray = new JSONObject(json).getJSONArray("m_messages");
+                var jsonArr = gson.fromJson(json, LogWindowSource.class).m_messages;
                 var logEntryList = new LinkedList<LogEntry>();
-                if (jsonArray != null) {
-                    for (int i=0;i<jsonArray.length();i++){
-                        var jsonObject = jsonArray.getJSONObject(i);
-                        var log = new LogEntry(LogLevel.valueOf(jsonObject.getString("level")),
-                                jsonObject.getString("message"));
-                        logEntryList.add(log);
-                        notFinalLogSource = Logger.getDefaultLogSource();
-                        for (LogEntry logEntry:logEntryList) {
-                            notFinalLogSource.append(logEntry.getLevel(), logEntry.getMessage());
-                        }
+                for(int i = 0; i< jsonArr.size(); i++){
+                    var jObj = jsonArr.get(i);
+                    var log = new LogEntry(LogLevel.valueOf(jObj.getLevel().toString()),
+                            jObj.getMessage());
+                    logEntryList.add(log);
+                    notFinalLogSource = Logger.getDefaultLogSource();
+                    for (LogEntry logEntry:logEntryList) {
+                        notFinalLogSource.append(logEntry.getLevel(), logEntry.getMessage());
                     }
                 }
             }
         }
-        if (notFinalLogSource == null)
-            notFinalLogSource = logSource;
-        m_logSource = notFinalLogSource;
-
-
-
-
-
-
-
-
+        if (notFinalLogSource == null) {
+            m_logSource = logSource;
+        }
+        else{
+            m_logSource = notFinalLogSource;
+        }
         m_logSource.registerListener(this);
         m_logContent = new TextArea("");
         m_logContent.setSize(200, 500);
@@ -74,60 +63,6 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, GetL
         getContentPane().add(panel);
         pack();
         updateLogContent();
-        /*
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            BufferedReader reader;
-            String json;
-            reader = new BufferedReader(new FileReader(
-                    ".\\src\\main\\java\\serialization\\LogWindowSerialization"));
-            json = reader.readLine();
-            if (json.length()>0) {
-                var exitDialogResult = Exiter.onExit();
-                if (exitDialogResult == 0){
-                    m_logSource = objectMapper.readValue(json, LogWindowSource.class);
-                }
-                else
-                    m_logSource = logSource;
-            }
-            else
-                m_logSource = logSource;
-            reader.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-         */
-
-        /*
-        if (1!=1)
-            m_logSource = logSource;
-        else {
-            ObjectMapper objectMapper = new ObjectMapper();
-            BufferedReader reader;
-            String json;
-            try {
-                reader = new BufferedReader(new FileReader(
-                        ".\\src\\main\\java\\serialization\\LogWindowSerialization"));
-                json = reader.readLine();
-
-                while (line != null) {
-                    System.out.println(line);
-                    // read next line
-                    line = reader.readLine();
-                }
-
-                m_logSource = objectMapper.readValue(json, LogWindowSource.class);
-                reader.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-        }
-        */
-
     }
 
     private void updateLogContent() {
@@ -139,23 +74,21 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, GetL
         m_logContent.invalidate();
     }
 
+    @SneakyThrows
     @Override
     public void doDefaultCloseAction(){
         m_logSource.unregisterListener(this);
         var confirmResult = Dialoger.onExit();
         if (confirmResult == 0) {
-            //за джейсонить ресурсы
-            ObjectMapper objectMapper = new ObjectMapper();
-            try {
-                String json =objectMapper.writeValueAsString(m_logSource);
-                JsonStringWriter.WriteJsonString(json, ".\\src\\main\\java\\serialization\\LogWindowSerialization");
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
-            }
+            GsonBuilder builder = new GsonBuilder();
+            Gson gson = builder.create();
+            FileWriter writer = new FileWriter(".\\src\\main\\java\\serialization\\LogWindowSerialization");
+            System.out.println(gson.toJson(m_logSource));
+            writer.write(gson.toJson(m_logSource));
+            writer.close();
             super.doDefaultCloseAction();
         }
     }
-
     @Override
     public void onLogChanged() {
         EventQueue.invokeLater(this::updateLogContent);

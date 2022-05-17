@@ -20,20 +20,10 @@ import java.util.LinkedList;
  * величиной m_iQueueLength (т.е. реально нужна очередь сообщений
  * ограниченного размера)
  */
-/*
-@Data
-@Builder
-//@NoArgsConstructor
-@AllArgsConstructor
-@JsonIgnoreProperties(ignoreUnknown = true)
-
- */
 public class LogWindowSource {
     public final LinkedList<LogEntry> m_messages;
     public final ArrayList<LogChangeListener> m_listeners;
-    //@JsonIgnore
     private volatile LogChangeListener[] m_activeListeners;
-    //@JsonIgnore
     private final int m_iQueueLength = 5;
 
 

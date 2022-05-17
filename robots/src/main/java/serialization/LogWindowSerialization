@@ -1,1 +1,1 @@
-{"m_messages":[{"message":"Protocol is working","level":"Debug"},{"message":"Смена языка","level":"Debug"},{"message":"Protocol is working","level":"Debug"},{"message":"Смена языка","level":"Debug"},{"message":"Change Lang","level":"Debug"}],"m_listeners":[]}
+{"m_messages":[{"m_logLevel":"Debug","m_strMessage":"Protocol is working"},{"m_logLevel":"Debug","m_strMessage":"Protocol is working"},{"m_logLevel":"Debug","m_strMessage":"New String"},{"m_logLevel":"Debug","m_strMessage":"New String"}],"m_listeners":[],"m_iQueueLength":5}

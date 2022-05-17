@@ -1,9 +1,8 @@
 package gui.windows;
-
 import gui.ButtonItem;
 import gui.Dialoger;
-import gui.GameVisualizer;
 import localization.Localization;
+import lombok.SneakyThrows;
 
 import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
@@ -12,13 +11,10 @@ import java.awt.Button;
 import java.util.ArrayList;
 
 public class ButtonWindow extends JInternalFrame implements GetLocalizeLabel {
-    private final GameVisualizer m_visualizer;
     public ArrayList<ButtonItem> buttons;
-
     public ButtonWindow() {
         super(GetLocalizeLabel.getLocalization("commandsLabel"),
                 true, true, true, true);
-        m_visualizer = new GameVisualizer();
         JPanel buttonPanel = new JPanel(new BorderLayout());
         var exitButton = new Button(GetLocalizeLabel.getLocalization("quit"));
         exitButton.addActionListener(e -> {
@@ -34,13 +30,11 @@ public class ButtonWindow extends JInternalFrame implements GetLocalizeLabel {
         loadPreviousSessionButton.addActionListener(e -> {
             var exitDialogResult = Dialoger.onExit();
             if (exitDialogResult == 0){
-
             }
         });
 
         buttons = new ArrayList<>();
         buttons.add(new ButtonItem(Localization::getQuit, exitButton));
-        //buttons.add(new ButtonItem(Localization::getLoad, loadPreviousSessionButton));
         for (var button: buttons) {
             buttonPanel.add(button.ItemButton);
         }
@@ -54,10 +48,12 @@ public class ButtonWindow extends JInternalFrame implements GetLocalizeLabel {
         }
     }
 
+    @SneakyThrows
     @Override public void doDefaultCloseAction() {
         var confirmResult = Dialoger.onExit();
-        if (confirmResult == 0)
+        if (confirmResult == 0){
             super.doDefaultCloseAction();
+        }
     }
 
 }

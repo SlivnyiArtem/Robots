@@ -58,17 +58,24 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, GetL
         }
         m_logSource.registerListener(this);
         m_logContent = new TextArea("");
-        int width = 200;
-        int height = 500;
+        int width = 300;
+        int height = 800;
+        int locationX = 800;
+        int locationY = 10;
         if (jsonSize != null && jsonSize.length() > 0) {
             var recoveryDialogResult = Dialoger.confirmRecovery();
             if (recoveryDialogResult == 0) {
                 var jsonObject = new JSONObject(jsonSize);
                 height = jsonObject.getInt("WindowHeight");
                 width = jsonObject.getInt("WindowWidth");
+                locationX = jsonObject.getInt("LocationX");
+                locationY = jsonObject.getInt("LocationY");
             }
         }
+        this.setLocation(locationX , locationY);
         m_logContent.setSize(width, height);
+
+
 
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(m_logContent, BorderLayout.CENTER);
@@ -99,6 +106,8 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, GetL
             var jsonObj = new JSONObject();
             jsonObj.put("WindowHeight", m_logContent.getHeight());
             jsonObj.put("WindowWidth", m_logContent.getWidth());
+            jsonObj.put("LocationX", this.getLocation().x);
+            jsonObj.put("LocationY", this.getLocation().y);
             writer.write(gson.toJson(m_logSource) + '\n' + jsonObj);
             //System.out.println(gson.toJson(m_logSource));
             //writer.write(gson.toJson(m_logSource));

@@ -74,8 +74,8 @@ public class MainApplicationFrame extends JFrame implements GetLocalizeLabel {
 
     protected LogWindow createLogWindow() throws IOException {
         logWindow = new LogWindow(Logger.getDefaultLogSource());
-        logWindow.setLocation(800, 10);
-        logWindow.setSize(300, 800);
+        //logWindow.setLocation(800, 10);
+        //logWindow.setSize(300, 800);
         setMinimumSize(logWindow.getSize());
         logWindow.pack();
         Logger.debug(GetLocalizeLabel.getLocalization("loggerSuccess"));

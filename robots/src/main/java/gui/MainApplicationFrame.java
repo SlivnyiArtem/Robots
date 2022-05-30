@@ -3,6 +3,8 @@ package gui;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 
 import javax.swing.JDesktopPane;
@@ -21,6 +23,7 @@ import gui.windows.GetLocalizeLabel;
 import gui.windows.LogWindow;
 import localization.Localization;
 import log.Logger;
+import lombok.SneakyThrows;
 
 /**
  * Что требуется сделать:
@@ -56,6 +59,17 @@ public class MainApplicationFrame extends JFrame implements GetLocalizeLabel {
 
         setJMenuBar(generateMenuBar());
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                OnClosing();
+            }
+        });
+    }
+
+    private void OnClosing(){
+        logWindow.doDefaultCloseAction();
     }
 
     protected LogWindow createLogWindow() throws IOException {

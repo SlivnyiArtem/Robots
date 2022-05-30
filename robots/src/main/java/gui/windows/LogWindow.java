@@ -13,6 +13,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import gui.Dialoger;
 import log.*;
+import org.json.JSONObject;
 import lombok.SneakyThrows;
 
 public class LogWindow extends JInternalFrame implements LogChangeListener, GetLocalizeLabel {
@@ -25,10 +26,11 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, GetL
         super(GetLocalizeLabel.getLocalization("protocolLabel"),
                 true, true, true, true);
         BufferedReader reader;
-        String json;
+        //String json;
         reader = new BufferedReader(new FileReader(
                 ".\\src\\main\\java\\serialization\\LogWindowSerialization"));
-        json = reader.readLine();
+        var json = reader.readLine();
+        var jsonSize = reader.readLine();
         GsonBuilder builder = new GsonBuilder();
         Gson gson = builder.create();
         if (json != null && json.length()>0){
@@ -56,7 +58,17 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, GetL
         }
         m_logSource.registerListener(this);
         m_logContent = new TextArea("");
-        m_logContent.setSize(200, 500);
+        int width = 200;
+        int height = 500;
+        if (jsonSize != null && jsonSize.length() > 0) {
+            var recoveryDialogResult = Dialoger.confirmRecovery();
+            if (recoveryDialogResult == 0) {
+                var jsonObject = new JSONObject(jsonSize);
+                height = jsonObject.getInt("WindowHeight");
+                width = jsonObject.getInt("WindowWidth");
+            }
+        }
+        m_logContent.setSize(width, height);
 
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(m_logContent, BorderLayout.CENTER);
@@ -83,8 +95,13 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, GetL
             GsonBuilder builder = new GsonBuilder();
             Gson gson = builder.create();
             FileWriter writer = new FileWriter(".\\src\\main\\java\\serialization\\LogWindowSerialization");
-            System.out.println(gson.toJson(m_logSource));
-            writer.write(gson.toJson(m_logSource));
+
+            var jsonObj = new JSONObject();
+            jsonObj.put("WindowHeight", m_logContent.getHeight());
+            jsonObj.put("WindowWidth", m_logContent.getWidth());
+            writer.write(gson.toJson(m_logSource) + '\n' + jsonObj);
+            //System.out.println(gson.toJson(m_logSource));
+            //writer.write(gson.toJson(m_logSource));
             writer.close();
             super.doDefaultCloseAction();
         }

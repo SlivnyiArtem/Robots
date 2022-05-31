@@ -4,11 +4,7 @@ import Models.ScorePoint;
 import log.Logger;
 import lombok.Synchronized;
 
-import java.awt.Color;
-import java.awt.EventQueue;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Point;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
@@ -18,6 +14,7 @@ import java.util.TimerTask;
 import java.util.Timer;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import javax.swing.*;
 
 public class GameVisualizer extends JPanel {
@@ -42,7 +39,7 @@ public class GameVisualizer extends JPanel {
     public volatile double CurrentBorderRight;
 
 
-    private final ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(500000);
+    private final ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) Executors.newCachedThreadPool();
     private final ArrayList<ScorePoint> scorePointsList = new ArrayList<>();
 
     private static volatile int robotScore = 0;
@@ -144,7 +141,9 @@ public class GameVisualizer extends JPanel {
         return asNormalizedRadians(polarCoordinates);
     }
 
-    private void updateRobot() {
+    private void updateRobot() throws InterruptedException {
+        //Logger.debug(threadPoolExecutor);
+        //TimeUnit.SECONDS.sleep(50);
 
         double distance = distance(m_targetPositionX, m_targetPositionY,
                 m_robotPositionX, m_robotPositionY);
@@ -227,7 +226,14 @@ public class GameVisualizer extends JPanel {
 
 
     public void onModelUpdateEvent() { // происходит на каждом обновлении состояния приложения
-        threadPoolExecutor.submit(this::updateRobot);
+        threadPoolExecutor.submit(() -> {
+            try {
+                updateRobot();
+            }
+            catch (InterruptedException exc){
+                Logger.debug("InterruptedExc");
+            }
+        });
         threadPoolExecutor.submit(this::updateScorePoints);
         threadPoolExecutor.submit(this::updateAutomaton);
     }

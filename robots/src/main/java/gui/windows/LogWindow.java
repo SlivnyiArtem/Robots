@@ -94,19 +94,23 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, GetL
     @SneakyThrows
     @Override
     public void doDefaultCloseAction(){
-        m_logSource.unregisterListener(this);
+        var confirmResult = Dialoger.confirmRecovery();
+        if (confirmResult == 0) {
+            m_logSource.unregisterListener(this);
 
-        GsonBuilder builder = new GsonBuilder();
-        Gson gson = builder.create();
-        FileWriter writer = new FileWriter(".\\src\\main\\java\\serialization\\LogWindowSerialization");
+            GsonBuilder builder = new GsonBuilder();
+            Gson gson = builder.create();
+            FileWriter writer = new FileWriter(".\\src\\main\\java\\serialization\\LogWindowSerialization");
 
-        var jsonObj = new JSONObject();
-        jsonObj.put("WindowHeight", m_logContent.getHeight());
-        jsonObj.put("WindowWidth", m_logContent.getWidth());
-        jsonObj.put("LocationX", this.getLocation().x);
-        jsonObj.put("LocationY", this.getLocation().y);
-        writer.write(gson.toJson(m_logSource) + '\n' + jsonObj);
-        writer.close();
+            var jsonObj = new JSONObject();
+            jsonObj.put("WindowHeight", m_logContent.getHeight());
+            jsonObj.put("WindowWidth", m_logContent.getWidth());
+            jsonObj.put("LocationX", this.getLocation().x);
+            jsonObj.put("LocationY", this.getLocation().y);
+            writer.write(gson.toJson(m_logSource) + '\n' + jsonObj);
+            writer.close();
+
+        }
         super.doDefaultCloseAction();
         }
     @Override

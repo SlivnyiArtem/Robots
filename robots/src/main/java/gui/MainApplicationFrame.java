@@ -78,8 +78,12 @@ public class MainApplicationFrame extends JFrame implements GetLocalizeLabel {
     }
 
     private void OnClosing(){
-        logWindow.doDefaultCloseAction();
-        gameWindow.doDefaultCloseAction();
+        var conf = Dialoger.confirmRecovery();
+        if (conf == 0){
+            logWindow.doDefaultCloseAction();
+            gameWindow.doDefaultCloseAction();
+        }
+
     }
 
     protected LogWindow createLogWindow() throws IOException {

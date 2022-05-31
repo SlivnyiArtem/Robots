@@ -1,2 +1,2 @@
-{"m_messages":[{"m_logLevel":"Debug","m_strMessage":"Computer score: 6"},{"m_logLevel":"Debug","m_strMessage":"Player score: 3"},{"m_logLevel":"Debug","m_strMessage":"Computer score: 7"},{"m_logLevel":"Debug","m_strMessage":"Player score: 4"},{"m_logLevel":"Debug","m_strMessage":"Computer score: 8"}],"m_listeners":[],"m_iQueueLength":5}
-{"WindowWidth":300,"LocationY":10,"LocationX":800,"WindowHeight":794}
+{"m_messages":[{"m_logLevel":"Debug","m_strMessage":"Computer score: 2"},{"m_logLevel":"Debug","m_strMessage":"Player score: 1"},{"m_logLevel":"Debug","m_strMessage":"Computer score: 3"},{"m_logLevel":"Debug","m_strMessage":"Computer score: 4"},{"m_logLevel":"Debug","m_strMessage":"Computer score: 5"}],"m_listeners":[],"m_iQueueLength":5}
+{"WindowWidth":300,"LocationY":77,"LocationX":1415,"WindowHeight":794}

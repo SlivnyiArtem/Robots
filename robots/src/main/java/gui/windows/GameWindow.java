@@ -89,11 +89,13 @@ public class GameWindow extends JInternalFrame implements SizeState, GetLocalize
     @SneakyThrows
     @Override
     public void doDefaultCloseAction() {
-        //var confir
-        // mResult = Dialoger.onExit();
-        GsonBuilder builder = new GsonBuilder();
-        Gson gson = builder.create();
-        FileWriter writer = new FileWriter(".\\src\\main\\java\\serialization\\GameWindowSerialization");
+        var confirmResult = Dialoger.confirmRecovery();
+        if (confirmResult == 0) {
+            //var confir
+            // mResult = Dialoger.onExit();
+            GsonBuilder builder = new GsonBuilder();
+            Gson gson = builder.create();
+            FileWriter writer = new FileWriter(".\\src\\main\\java\\serialization\\GameWindowSerialization");
         /*
         if(this.isClosed){
             writer.write("isClosed");
@@ -112,11 +114,14 @@ public class GameWindow extends JInternalFrame implements SizeState, GetLocalize
         }
 
          */
-        var jsonObj = new JSONObject();
-        putObjectsInJSONObject(jsonObj,m_visualizer);
-        writer.write(jsonObj.toString());
-        writer.close();
+            var jsonObj = new JSONObject();
+            putObjectsInJSONObject(jsonObj,m_visualizer);
+            writer.write(jsonObj.toString());
+            writer.close();
+
+        }
         super.doDefaultCloseAction();
+
 
 
     }

@@ -57,8 +57,13 @@ public class MainApplicationFrame extends JFrame implements GetLocalizeLabel {
         Logger.debug(String.valueOf(gameWindow.Width));
         Logger.debug(String.valueOf(gameWindow.Hight));
 
-        gameWindow.setSize((int)gameWindow.Width, (int)gameWindow.Hight);
-        //gameWindow.setSize(400, 400);
+        if( gameWindow.Width != 0 && gameWindow.Hight != 0){
+            gameWindow.setSize((int)gameWindow.Width, (int)gameWindow.Hight);
+        }
+        else{
+            gameWindow.setSize(400, 400);
+
+        }
         addWindow(gameWindow);
 
         setJMenuBar(generateMenuBar());

@@ -1,2 +1,2 @@
-{"m_messages":[{"m_logLevel":"Debug","m_strMessage":"388.0"},{"m_logLevel":"Debug","m_strMessage":"70.0"},{"m_logLevel":"Debug","m_strMessage":"Protocol is working"},{"m_logLevel":"Debug","m_strMessage":"376.0"},{"m_logLevel":"Debug","m_strMessage":"310.0"}],"m_listeners":[],"m_iQueueLength":5}
-{"WindowWidth":300,"LocationY":10,"LocationX":800,"WindowHeight":776}
+{"m_messages":[{"m_logLevel":"Debug","m_strMessage":"Computer score: 6"},{"m_logLevel":"Debug","m_strMessage":"Player score: 3"},{"m_logLevel":"Debug","m_strMessage":"Computer score: 7"},{"m_logLevel":"Debug","m_strMessage":"Player score: 4"},{"m_logLevel":"Debug","m_strMessage":"Computer score: 8"}],"m_listeners":[],"m_iQueueLength":5}
+{"WindowWidth":300,"LocationY":10,"LocationX":800,"WindowHeight":794}

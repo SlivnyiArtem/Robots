@@ -42,7 +42,7 @@ public class GameVisualizer extends JPanel {
     public volatile double CurrentBorderRight;
 
 
-    private final ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(5);
+    private final ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(500000);
     private final ArrayList<ScorePoint> scorePointsList = new ArrayList<>();
 
     private static volatile int robotScore = 0;
@@ -168,7 +168,7 @@ public class GameVisualizer extends JPanel {
 
     private void updateScorePoints() {
         for (var scorePoint : scorePointsList) {
-            if (scorePoint.getDistanceToPoint(m_robotPositionX, m_robotPositionY) < 5) {
+            if (scorePoint.getDistanceToPoint(m_robotPositionX, m_robotPositionY) < 10) {
                 synchronized (GameVisualizer.class) {
                     robotScore += 1;
                 }

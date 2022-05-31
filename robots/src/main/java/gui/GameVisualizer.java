@@ -1,6 +1,8 @@
 package gui;
 
+import Models.ScorePoint;
 import gui.windows.GameWindow;
+import log.Logger;
 
 import java.awt.Color;
 import java.awt.EventQueue;
@@ -10,8 +12,13 @@ import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
+import java.util.ArrayList;
+import java.util.Random;
 import java.util.TimerTask;
 import java.util.Timer;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import javax.swing.*;
 
 public class GameVisualizer extends JPanel {
@@ -19,6 +26,13 @@ public class GameVisualizer extends JPanel {
     public volatile double m_robotPositionX = 150;
     public volatile double m_robotPositionY = 100;
     public volatile double m_robotDirection = 0;
+
+
+
+
+
+
+
 
     public volatile int m_targetPositionX = 150;
     public volatile int m_targetPositionY = 100;
@@ -29,9 +43,22 @@ public class GameVisualizer extends JPanel {
     public final Timer m_timer = initTimer();
     public volatile double CurrentBorderRight;
 
+
+    private final ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(2);
+    private final ArrayList<ScorePoint> scorePointsList = new ArrayList<>();
+
+
     public volatile double CurrentBorderDown;
 
     public GameVisualizer() {
+        m_timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                var rand = new Random();
+                scorePointsList.add(new ScorePoint(rand.nextDouble()* CurrentBorderDown,
+                        rand.nextDouble()*CurrentBorderRight));
+            }
+        },0, 5000);
         m_timer.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -62,6 +89,8 @@ public class GameVisualizer extends JPanel {
         m_robotDirection = robotDirection;
         m_targetPositionX = round(targetPositionX);
         m_targetPositionY = round(targetPositionY);
+
+
         m_timer.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -113,8 +142,7 @@ public class GameVisualizer extends JPanel {
         return asNormalizedRadians(polarCoordinates);
     }
 
-
-    public void onModelUpdateEvent() { // происходит на каждом обновлении состояния приложения
+    private void updateRobot(){
         double distance = distance(m_targetPositionX, m_targetPositionY,
                 m_robotPositionX, m_robotPositionY);
         if (distance < 0.5) { // мы достигли цели
@@ -137,6 +165,21 @@ public class GameVisualizer extends JPanel {
         tryStartOutTheDifferentBorder();
 
         moveRobot(velocity, angularVelocity, 10);
+    }
+
+    private void updateTargets(){
+        scorePointsList.removeIf(scorePoint -> scorePoint.getDistanceToPoint(m_robotPositionX, m_robotPositionY) < 5);
+    }
+
+
+    public void onModelUpdateEvent() { // происходит на каждом обновлении состояния приложения
+        threadPoolExecutor.submit(this::updateRobot);
+        threadPoolExecutor.submit(this::updateTargets);
+        if (threadPoolExecutor.getActiveCount()> 0) {
+            System.out.println(threadPoolExecutor.getActiveCount());
+            System.out.println(threadPoolExecutor.getCompletedTaskCount());
+        }
+        //System.out.println(threadPoolExecutor.getActiveCount());
     }
 
     public static double applyLimits(double value, double min, double max) {
@@ -205,6 +248,9 @@ public class GameVisualizer extends JPanel {
         Graphics2D g2d = (Graphics2D) g;
         drawRobot(g2d, round(m_robotPositionX), round(m_robotPositionY), m_robotDirection);
         drawTarget(g2d, m_targetPositionX, m_targetPositionY);
+        for (var scorePoint:scorePointsList) {
+            scorePoint.drawScorePoint(g2d);
+        }
     }
 
     public static void fillOval(Graphics g, int centerX, int centerY, int diam1, int diam2) {
@@ -215,7 +261,7 @@ public class GameVisualizer extends JPanel {
         g.drawOval(centerX - diam1 / 2, centerY - diam2 / 2, diam1, diam2);
     }
 
-    public void fillAndDrawOval(Graphics2D g, int x, int y, Color fillColor,
+    public static void fillAndDrawOval(Graphics2D g, int x, int y, Color fillColor,
                                  Color drawColor, int diam1, int diam2) {
         g.setColor(fillColor);
         fillOval(g, x, y, diam1, diam2);

@@ -22,7 +22,7 @@ public class GameWindow extends JInternalFrame implements SizeState, GetLocalize
     public final GameVisualizer m_visualizer;
     private GameVisualizer notFinalVisualizer;
     public double Hight;
-    public double Weight;
+    public double Width;
     public JPanel panel;
 
     public GameWindow() throws IOException {
@@ -32,8 +32,15 @@ public class GameWindow extends JInternalFrame implements SizeState, GetLocalize
         String stingJson;
         reader = new BufferedReader(new FileReader(
                 ".\\src\\main\\java\\serialization\\GameWindowSerialization"));
+        int locationX = 10;
+        int locationY = 10;
+        //int windowWeight = 400;
+        //int windowHeight = 400;
         stingJson = reader.readLine();
-        if (stingJson != null && stingJson.length()>0){
+
+        if (stingJson != null && stingJson.length() > 0){
+            //this.setDefaultCloseOperation(JInternalFrame.EXIT_ON_CLOSE);
+            //setMaximumSize(this.getMinimumSize());
             var recoveryDialogResult = Dialoger.confirmRecovery();
             if (recoveryDialogResult == 0){
                 var jsonObject = new JSONObject(stingJson);
@@ -45,6 +52,10 @@ public class GameWindow extends JInternalFrame implements SizeState, GetLocalize
                 var robotDirection = jsonObject.getDouble("m_robotDirection");
                 var targetPositionX = jsonObject.getDouble("m_targetPositionX");
                 var targetPositionY = jsonObject.getDouble("m_targetPositionY");
+                locationX = jsonObject.getInt("LocationX");
+                locationY = jsonObject.getInt("LocationY");
+                Width = jsonObject.getInt("CurrentBorderRight");
+                Hight = jsonObject.getInt("CurrentBorderDown");
 
                 notFinalVisualizer = new GameVisualizer(currentBorderRight, CurrentBorderDown, robotPositionX, robotPositionY, robotDirection,
                         targetPositionX,targetPositionY);
@@ -57,15 +68,19 @@ public class GameWindow extends JInternalFrame implements SizeState, GetLocalize
         else{
             m_visualizer = notFinalVisualizer;
         }
+        this.setLocation(locationX,locationY);
+        //this.setSize((int)Width, Hight);
+
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(m_visualizer, BorderLayout.CENTER);
         getContentPane().add(panel);
         pack();
+
         panel.addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent evt) {
                 Hight = evt.getComponent().getSize().getHeight();
-                Weight = evt.getComponent().getSize().getWidth();
-                update(Hight, Weight);
+                Width = evt.getComponent().getSize().getWidth();
+                update(Hight, Width);
             }
         });
 
@@ -74,32 +89,47 @@ public class GameWindow extends JInternalFrame implements SizeState, GetLocalize
     @SneakyThrows
     @Override
     public void doDefaultCloseAction() {
-
-        var confirmResult = Dialoger.onExit();
-        if (confirmResult == 0) {
-
-            GsonBuilder builder = new GsonBuilder();
-            Gson gson = builder.create();
-            FileWriter writer = new FileWriter(".\\src\\main\\java\\serialization\\GameWindowSerialization");
+        //var confir
+        // mResult = Dialoger.onExit();
+        GsonBuilder builder = new GsonBuilder();
+        Gson gson = builder.create();
+        FileWriter writer = new FileWriter(".\\src\\main\\java\\serialization\\GameWindowSerialization");
+        if(this.isClosed){
+            writer.write("isClosed");
+            writer.close();
+        }
+        else if(this.isMaximum){
+            writer.write("isMaximum");
+            writer.close();
+        }
+        else if (this.isIcon()) {
+            writer.write("isIcon");
+            writer.close();
+        }
+        else{
             var jsonObj = new JSONObject();
             putObjectsInJSONObject(jsonObj,m_visualizer);
             writer.write(jsonObj.toString());
             writer.close();
             super.doDefaultCloseAction();
         }
+
+
     }
 
     @Override
     public void update(double w, double Height){
-        m_visualizer.setWH(Weight, Hight);
+        m_visualizer.setWH(Width, Hight);
     }
-    public static void putObjectsInJSONObject(JSONObject jsonObj, GameVisualizer m_visualizer){
+    public void putObjectsInJSONObject(JSONObject jsonObj, GameVisualizer m_visualizer){
         jsonObj.put("m_robotPositionX", m_visualizer.m_robotPositionX);
         jsonObj.put("m_robotPositionY", m_visualizer.m_robotPositionY);
         jsonObj.put("m_robotDirection", m_visualizer.m_robotDirection);
         jsonObj.put("m_targetPositionX",m_visualizer.m_targetPositionX);
         jsonObj.put("m_targetPositionY",m_visualizer.m_targetPositionY);
-        jsonObj.put("CurrentBorderRight", m_visualizer.CurrentBorderRight);
-        jsonObj.put("CurrentBorderDown", m_visualizer.CurrentBorderDown);
+        jsonObj.put("CurrentBorderRight", Width);
+        jsonObj.put("CurrentBorderDown", Hight);
+        jsonObj.put("LocationX", this.getLocation().x);
+        jsonObj.put("LocationY", this.getLocation().y);
     }
 }

@@ -54,7 +54,11 @@ public class MainApplicationFrame extends JFrame implements GetLocalizeLabel {
         addWindow(buttonWindow);
 
         gameWindow = new GameWindow();
-        gameWindow.setSize(400, 400);
+        Logger.debug(String.valueOf(gameWindow.Width));
+        Logger.debug(String.valueOf(gameWindow.Hight));
+
+        gameWindow.setSize((int)gameWindow.Width, (int)gameWindow.Hight);
+        //gameWindow.setSize(400, 400);
         addWindow(gameWindow);
 
         setJMenuBar(generateMenuBar());
@@ -70,6 +74,7 @@ public class MainApplicationFrame extends JFrame implements GetLocalizeLabel {
 
     private void OnClosing(){
         logWindow.doDefaultCloseAction();
+        gameWindow.doDefaultCloseAction();
     }
 
     protected LogWindow createLogWindow() throws IOException {

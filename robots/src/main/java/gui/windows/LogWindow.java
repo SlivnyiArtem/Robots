@@ -29,6 +29,10 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, GetL
         //String json;
         reader = new BufferedReader(new FileReader(
                 ".\\src\\main\\java\\serialization\\LogWindowSerialization"));
+        int width = 300;
+        int height = 800;
+        int locationX = 800;
+        int locationY = 10;
         var json = reader.readLine();
         var jsonSize = reader.readLine();
         GsonBuilder builder = new GsonBuilder();
@@ -48,6 +52,14 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, GetL
                         notFinalLogSource.append(logEntry.getLevel(), logEntry.getMessage());
                     }
                 }
+                if (jsonSize != null && jsonSize.length() > 0) {
+                    var jsonObject = new JSONObject(jsonSize);
+                    height = jsonObject.getInt("WindowHeight");
+                    width = jsonObject.getInt("WindowWidth");
+                    locationX = jsonObject.getInt("LocationX");
+                    locationY = jsonObject.getInt("LocationY");
+                }
+
             }
         }
         if (notFinalLogSource == null) {
@@ -58,20 +70,6 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, GetL
         }
         m_logSource.registerListener(this);
         m_logContent = new TextArea("");
-        int width = 300;
-        int height = 800;
-        int locationX = 800;
-        int locationY = 10;
-        if (jsonSize != null && jsonSize.length() > 0) {
-            var recoveryDialogResult = Dialoger.confirmRecovery();
-            if (recoveryDialogResult == 0) {
-                var jsonObject = new JSONObject(jsonSize);
-                height = jsonObject.getInt("WindowHeight");
-                width = jsonObject.getInt("WindowWidth");
-                locationX = jsonObject.getInt("LocationX");
-                locationY = jsonObject.getInt("LocationY");
-            }
-        }
         this.setLocation(locationX , locationY);
         m_logContent.setSize(width, height);
 
@@ -97,24 +95,20 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, GetL
     @Override
     public void doDefaultCloseAction(){
         m_logSource.unregisterListener(this);
-        var confirmResult = Dialoger.onExit();
-        if (confirmResult == 0) {
-            GsonBuilder builder = new GsonBuilder();
-            Gson gson = builder.create();
-            FileWriter writer = new FileWriter(".\\src\\main\\java\\serialization\\LogWindowSerialization");
 
-            var jsonObj = new JSONObject();
-            jsonObj.put("WindowHeight", m_logContent.getHeight());
-            jsonObj.put("WindowWidth", m_logContent.getWidth());
-            jsonObj.put("LocationX", this.getLocation().x);
-            jsonObj.put("LocationY", this.getLocation().y);
-            writer.write(gson.toJson(m_logSource) + '\n' + jsonObj);
-            //System.out.println(gson.toJson(m_logSource));
-            //writer.write(gson.toJson(m_logSource));
-            writer.close();
-            super.doDefaultCloseAction();
+        GsonBuilder builder = new GsonBuilder();
+        Gson gson = builder.create();
+        FileWriter writer = new FileWriter(".\\src\\main\\java\\serialization\\LogWindowSerialization");
+
+        var jsonObj = new JSONObject();
+        jsonObj.put("WindowHeight", m_logContent.getHeight());
+        jsonObj.put("WindowWidth", m_logContent.getWidth());
+        jsonObj.put("LocationX", this.getLocation().x);
+        jsonObj.put("LocationY", this.getLocation().y);
+        writer.write(gson.toJson(m_logSource) + '\n' + jsonObj);
+        writer.close();
+        super.doDefaultCloseAction();
         }
-    }
     @Override
     public void onLogChanged() {
         EventQueue.invokeLater(this::updateLogContent);

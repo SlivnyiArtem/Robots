@@ -32,6 +32,10 @@ public class GameWindow extends JInternalFrame implements SizeState, GetLocalize
         String stingJson;
         reader = new BufferedReader(new FileReader(
                 ".\\src\\main\\java\\serialization\\GameWindowSerialization"));
+        int width = 400;
+        int height = 400;
+        //int locationX = 10;
+        //int locationY = 10;
         stingJson = reader.readLine();
         if (stingJson != null && stingJson.length()>0){
             var recoveryDialogResult = Dialoger.confirmRecovery();
@@ -45,6 +49,11 @@ public class GameWindow extends JInternalFrame implements SizeState, GetLocalize
                 var robotDirection = jsonObject.getDouble("m_robotDirection");
                 var targetPositionX = jsonObject.getDouble("m_targetPositionX");
                 var targetPositionY = jsonObject.getDouble("m_targetPositionY");
+                width = jsonObject.getInt("CurrentBorderRight");
+                height = jsonObject.getInt("CurrentBorderDown");
+
+                //locationX = jsonObject.getInt("GameWindowLocationX");
+                //locationY = jsonObject.getInt("GameWindowLocationY");
 
                 notFinalVisualizer = new GameVisualizer(currentBorderRight, CurrentBorderDown, robotPositionX, robotPositionY, robotDirection,
                         targetPositionX,targetPositionY);
@@ -57,6 +66,7 @@ public class GameWindow extends JInternalFrame implements SizeState, GetLocalize
         else{
             m_visualizer = notFinalVisualizer;
         }
+        m_visualizer.setSize(width, height);
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(m_visualizer, BorderLayout.CENTER);
         getContentPane().add(panel);
@@ -93,7 +103,8 @@ public class GameWindow extends JInternalFrame implements SizeState, GetLocalize
     public void update(double w, double Height){
         m_visualizer.setWH(Weight, Hight);
     }
-    public static void putObjectsInJSONObject(JSONObject jsonObj, GameVisualizer m_visualizer){
+
+    public void putObjectsInJSONObject(JSONObject jsonObj, GameVisualizer m_visualizer){
         jsonObj.put("m_robotPositionX", m_visualizer.m_robotPositionX);
         jsonObj.put("m_robotPositionY", m_visualizer.m_robotPositionY);
         jsonObj.put("m_robotDirection", m_visualizer.m_robotDirection);
@@ -101,5 +112,7 @@ public class GameWindow extends JInternalFrame implements SizeState, GetLocalize
         jsonObj.put("m_targetPositionY",m_visualizer.m_targetPositionY);
         jsonObj.put("CurrentBorderRight", m_visualizer.CurrentBorderRight);
         jsonObj.put("CurrentBorderDown", m_visualizer.CurrentBorderDown);
+        //jsonObj.put("GameWindowLocationX", this.getLocation().x);
+        //jsonObj.put("GameWindowLocationY", this.getLocation().y);
     }
 }

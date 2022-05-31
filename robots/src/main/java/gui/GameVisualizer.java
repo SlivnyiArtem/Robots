@@ -1,8 +1,8 @@
 package gui;
 
 import Models.ScorePoint;
-import gui.windows.GameWindow;
 import log.Logger;
+import lombok.Synchronized;
 
 import java.awt.Color;
 import java.awt.EventQueue;
@@ -18,7 +18,6 @@ import java.util.TimerTask;
 import java.util.Timer;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 import javax.swing.*;
 
 public class GameVisualizer extends JPanel {
@@ -28,10 +27,9 @@ public class GameVisualizer extends JPanel {
     public volatile double m_robotDirection = 0;
 
 
-
-
-
-
+    public volatile double m_automatonX = 150;
+    public volatile double m_automatonY = 100;
+    public volatile double m_automatonDirection = 0;
 
 
     public volatile int m_targetPositionX = 150;
@@ -44,8 +42,11 @@ public class GameVisualizer extends JPanel {
     public volatile double CurrentBorderRight;
 
 
-    private final ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(2);
+    private final ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(5);
     private final ArrayList<ScorePoint> scorePointsList = new ArrayList<>();
+
+    private static volatile int robotScore = 0;
+    private static volatile  int automatonScore = 0;
 
 
     public volatile double CurrentBorderDown;
@@ -55,10 +56,10 @@ public class GameVisualizer extends JPanel {
             @Override
             public void run() {
                 var rand = new Random();
-                scorePointsList.add(new ScorePoint(rand.nextDouble()* CurrentBorderDown,
-                        rand.nextDouble()*CurrentBorderRight));
+                scorePointsList.add(new ScorePoint(rand.nextDouble() * CurrentBorderDown,
+                        rand.nextDouble() * CurrentBorderRight));
             }
-        },0, 5000);
+        }, 0, 5000);
         m_timer.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -80,6 +81,7 @@ public class GameVisualizer extends JPanel {
         });
         setDoubleBuffered(true);
     }
+
     public GameVisualizer(double currentBorderRight, double currentBorderDown, double robotPositionX, double robotPositionY,
                           double robotDirection, double targetPositionX, double targetPositionY) {
         CurrentBorderDown = currentBorderRight;
@@ -142,14 +144,14 @@ public class GameVisualizer extends JPanel {
         return asNormalizedRadians(polarCoordinates);
     }
 
-    private void updateRobot(){
+    private void updateRobot() {
+
         double distance = distance(m_targetPositionX, m_targetPositionY,
                 m_robotPositionX, m_robotPositionY);
         if (distance < 0.5) { // мы достигли цели
             return;
         }
 
-        double velocity = maxVelocity;
         double angleToTarget = angleToRadians(m_robotPositionX, m_robotPositionY, m_targetPositionX, m_targetPositionY);
         double angularVelocity = 0;
         if (angleToTarget > m_robotDirection) {
@@ -158,28 +160,76 @@ public class GameVisualizer extends JPanel {
         if (angleToTarget < m_robotDirection) {
             angularVelocity = -maxAngularVelocity;
         }
-        //обновляем угловую скорость (векторная величина, характеризующая быстроту и
-        //направление вращения материальной точки или
-        // абсолютно твёрдого тела относительно центра вращения.)
 
         tryStartOutTheDifferentBorder();
 
-        moveRobot(velocity, angularVelocity, 10);
+        moveRobot(maxVelocity, angularVelocity, 10);
     }
 
-    private void updateTargets(){
-        scorePointsList.removeIf(scorePoint -> scorePoint.getDistanceToPoint(m_robotPositionX, m_robotPositionY) < 5);
+    private void updateScorePoints() {
+        for (var scorePoint : scorePointsList) {
+            if (scorePoint.getDistanceToPoint(m_robotPositionX, m_robotPositionY) < 5) {
+                synchronized (GameVisualizer.class) {
+                    robotScore += 1;
+                }
+                Logger.debug("Player score: " + robotScore);
+                scorePointsList.remove(scorePoint);
+            }
+            if (scorePoint.getDistanceToPoint(m_automatonX, m_automatonY) < 5) {
+                synchronized (GameVisualizer.class) {
+                    automatonScore += 1;
+                }
+                Logger.debug("Computer score: " + automatonScore);
+                scorePointsList.remove(scorePoint);
+            }
+        }
+    }
+
+    private void updateAutomaton() {
+        var velocity = maxVelocity;
+        var movementDuration = 10;
+        var nearestScorePoint = getNearestScorePoint(m_automatonX, m_automatonY, scorePointsList);
+        double angleToTarget = angleToRadians(m_automatonX, m_automatonY, nearestScorePoint.X, nearestScorePoint.Y);
+        double angularVelocity = 0;
+        if (angleToTarget > m_automatonDirection)
+            angularVelocity = maxAngularVelocity;
+        if (angleToTarget < m_automatonDirection)
+            angularVelocity = -maxAngularVelocity;
+        tryStartOutTheDifferentBorderForAutomaton();
+        velocity = applyLimits(velocity, 0, maxVelocity);
+
+        angularVelocity = applyLimits(angularVelocity, -maxVelocity, maxAngularVelocity);
+        double newX = m_automatonX + velocity / angularVelocity * (Math.sin(m_automatonDirection + angularVelocity * movementDuration) - Math.sin(m_automatonDirection));
+        if (!Double.isFinite(newX))
+            newX = m_automatonX + velocity * movementDuration * Math.cos(m_automatonDirection);
+        double newY = m_automatonY - velocity / angularVelocity * (Math.cos(m_automatonDirection + angularVelocity * movementDuration) - Math.cos(m_automatonDirection));
+        if (!Double.isFinite(newY))
+            newY = m_automatonY + velocity * movementDuration * Math.sin(m_automatonDirection);
+        m_automatonX = newX;
+        m_automatonY = newY;
+        synchronized (GameVisualizer.class) {
+            m_automatonDirection = asNormalizedRadians(m_automatonDirection + angularVelocity * movementDuration);
+        }
+    }
+
+    private ScorePoint getNearestScorePoint(double m_automatonX, double m_automatonY, ArrayList<ScorePoint> scorePointsList) {
+        ScorePoint nearestScorePoint = new ScorePoint(m_automatonX, m_automatonY);
+        var minimalDistance = Double.MAX_VALUE;
+        for (var currentScorePoint : scorePointsList) {
+            var currentDistance = currentScorePoint.getDistanceToPoint(m_automatonX, m_automatonY);
+            if (currentDistance < minimalDistance) {
+                nearestScorePoint = currentScorePoint;
+                minimalDistance = currentDistance;
+            }
+        }
+        return nearestScorePoint;
     }
 
 
     public void onModelUpdateEvent() { // происходит на каждом обновлении состояния приложения
         threadPoolExecutor.submit(this::updateRobot);
-        threadPoolExecutor.submit(this::updateTargets);
-        if (threadPoolExecutor.getActiveCount()> 0) {
-            System.out.println(threadPoolExecutor.getActiveCount());
-            System.out.println(threadPoolExecutor.getCompletedTaskCount());
-        }
-        //System.out.println(threadPoolExecutor.getActiveCount());
+        threadPoolExecutor.submit(this::updateScorePoints);
+        threadPoolExecutor.submit(this::updateAutomaton);
     }
 
     public static double applyLimits(double value, double min, double max) {
@@ -197,6 +247,17 @@ public class GameVisualizer extends JPanel {
             }
             if (m_robotPositionY > CurrentBorderDown || m_robotPositionY < 0) {
                 m_robotPositionY = CurrentBorderDown - m_robotPositionY;
+            }
+        }
+    }
+
+    public void tryStartOutTheDifferentBorderForAutomaton() {
+        synchronized (this) {
+            if (m_automatonX > CurrentBorderRight || m_automatonX < 0) {
+                m_automatonX = CurrentBorderRight - m_automatonX;
+            }
+            if (m_automatonY > CurrentBorderDown || m_automatonY < 0) {
+                m_automatonY = CurrentBorderDown - m_automatonY;
             }
         }
     }
@@ -223,7 +284,9 @@ public class GameVisualizer extends JPanel {
         m_robotPositionX = newX;
         m_robotPositionY = newY;
 
-        m_robotDirection = asNormalizedRadians(m_robotDirection + angularVelocity * movementDuration);
+        synchronized (GameVisualizer.class) {
+            m_robotDirection = asNormalizedRadians(m_robotDirection + angularVelocity * movementDuration);
+        }
     }
 
     public static double asNormalizedRadians(double angle) {
@@ -243,14 +306,14 @@ public class GameVisualizer extends JPanel {
 
     @Override
     public void paint(Graphics g) {
-        // отрисовка робота и цели(вроде только этого?)
         super.paint(g);
         Graphics2D g2d = (Graphics2D) g;
         drawRobot(g2d, round(m_robotPositionX), round(m_robotPositionY), m_robotDirection);
         drawTarget(g2d, m_targetPositionX, m_targetPositionY);
-        for (var scorePoint:scorePointsList) {
+        for (var scorePoint : scorePointsList) {
             scorePoint.drawScorePoint(g2d);
         }
+        drawAutomaton(g2d, m_automatonX, m_automatonY, m_automatonDirection);
     }
 
     public static void fillOval(Graphics g, int centerX, int centerY, int diam1, int diam2) {
@@ -262,7 +325,7 @@ public class GameVisualizer extends JPanel {
     }
 
     public static void fillAndDrawOval(Graphics2D g, int x, int y, Color fillColor,
-                                 Color drawColor, int diam1, int diam2) {
+                                       Color drawColor, int diam1, int diam2) {
         g.setColor(fillColor);
         fillOval(g, x, y, diam1, diam2);
         g.setColor(drawColor);
@@ -273,10 +336,22 @@ public class GameVisualizer extends JPanel {
      * три метода выше отвечают за отрисовку и "заливку" овалов
      */
 
-    public void drawRobot(Graphics2D g, int x, int y, double direction) {
-        var robotCenterX = round(m_robotPositionX);
-        var robotCenterY = round(m_robotPositionY);
-        AffineTransform t = AffineTransform.getRotateInstance(direction, robotCenterX, robotCenterY);
+    public void drawAutomaton(Graphics2D g, double automatonX, double automatonY, double automatonDirection) {
+        var robotCenterX = round(automatonX);
+        var robotCenterY = round(automatonY);
+        AffineTransform t = AffineTransform.getRotateInstance(automatonDirection, robotCenterX, robotCenterY);
+        //отображение плоскости на саму себя, афинное преобразование
+        g.setTransform(t);
+        fillAndDrawOval(g, robotCenterX, robotCenterY,
+                Color.GREEN, Color.BLACK, 30, 10);
+        fillAndDrawOval(g, robotCenterX + 10, robotCenterY,
+                Color.WHITE, Color.BLACK, 5, 5);
+    }
+
+    public void drawRobot(Graphics2D g, double robotPositionX, double robotPositionY, double robotDirection) {
+        var robotCenterX = round(robotPositionX);
+        var robotCenterY = round(robotPositionY);
+        AffineTransform t = AffineTransform.getRotateInstance(robotDirection, robotCenterX, robotCenterY);
         //отображение плоскости на саму себя, афинное преобразование
         g.setTransform(t);
         fillAndDrawOval(g, robotCenterX, robotCenterY,
